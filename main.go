@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"gitlab.com/yjagdale/siem-data-producer/app"
+	"gitlab.com/yjagdale/siem-data-producer/utils"
 )
 
 func init() {
-	fmt.Println("Starting Data Producer")
+	utils.LoggerUtils.InitLogger()
 }
 
 func main() {
