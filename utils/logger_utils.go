@@ -3,12 +3,12 @@ package utils
 import log "github.com/sirupsen/logrus"
 
 var (
-	LoggerUtils loggerUtils = &logger{}
+	LoggerUtils loggerUtilsInterface = &logger{}
 )
 
 type logger struct{}
 
-type loggerUtils interface {
+type loggerUtilsInterface interface {
 	InitLogger()
 }
 
