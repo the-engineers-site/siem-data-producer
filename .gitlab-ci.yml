@@ -3,7 +3,8 @@ image: golang:latest
 
 variables:
   # Please edit to your GitLab project
-  REPO_NAME: gitlab.com/yjagdale/siem-data-producer
+  REPO_NAME: gitlab.com/namespace/project
+  DOCKER_DRIVER: overlay
 
 before_script:
   - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
@@ -13,11 +14,14 @@ before_script:
 stages:
   - test
   - build
+  - package
 
 format:
   stage: test
   script:
     - go fmt $(go list ./... | grep -v /vendor/)
+    - go vet $(go list ./... | grep -v /vendor/)
+    - go test -race $(go list ./... | grep -v /vendor/)
 
 compile:
   stage: build
@@ -25,4 +29,14 @@ compile:
     - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/siem-data-producer
   artifacts:
     paths:
-      - siem-data-producer
+      - $CI_PROJECT_DIR/siem-data-producer
+
+docker-build:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: package
+  script:
+    - docker build -t registry.gitlab.com/yjagdale/siem-data-producer .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker push registry.gitlab.com/yjagdale/siem-data-producer

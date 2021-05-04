@@ -6,9 +6,9 @@ import (
 )
 
 const (
-	notFound   = "NOT_FOUND"
-	badRequest = "BAD_REQUEST"
-	statusOk   = "SUCCESS"
+	badRequest        = "BAD_REQUEST"
+	statusOk          = "SUCCESS"
+	statusServerError = "SERVER_ERROR"
 )
 
 type Response struct {
@@ -24,10 +24,10 @@ func NewBadRequestResponse(message string) *Response {
 	return getResponse(http.StatusBadRequest, gin.H{"code": badRequest, "reason": message})
 }
 
-func NewNotFountResponse(message string) *Response {
-	return getResponse(http.StatusNotFound, gin.H{"code": notFound, "reason": message})
-}
-
 func NewOkResponse(message string) *Response {
 	return getResponse(http.StatusOK, gin.H{"code": statusOk, "message": message})
+}
+
+func NewInternalServerError(message string, err error) *Response {
+	return getResponse(http.StatusInternalServerError, gin.H{"code": statusServerError, "Message": message, "Error": err})
 }

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Upload Log Sample</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function checkable(sender) {
+            var validExts = [".log", ".csv"];
+            var fileExt = sender.value;
+            fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+            if (validExts.indexOf(fileExt) < 0) {
+                alert("Invalid file selected, valid files are of " +
+                    validExts.toString() + " types.");
+                sender.value="";
+                return false;
+            }
+            else return true;
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+<section>
+    <div class="box-border" style="padding:20px 0;">
+        <h1 class="title" style="padding-top:0;">Upload Log File For processing</h1>
+        <form action="/file/upload" method="post" autocomplete="off" enctype="multipart/form-data">
+            <div class="content mt-5 mx-auto">
+                <label for="Device Type"></label><input
+                        class="input"
+                        id="Device Type"
+                        name="Device Type"
+                        type="text"
+                        pattern="[^\\/:\x22*?<>|]+"
+                        placeholder="Device Type"
+                        required="">
+                <span class="border"></span>
+            </div>
+            <div class="content mt-5 mx-auto">
+                <label for="Device Vendor"></label><input class="input" id="Device Vendor" type="text" placeholder="Device Vendor" name="Device Vendor"
+                                                          required="">
+                <span class="border"></span>
+            </div>
+            <br>
+            <div class="content mt-5 mx-auto">
+                <input type="file" name="file" onChange="checkable(this);" accept=".csv,.log" value="">
+            </div>
+            <br>
+            <div class="content mt-5 mx-auto">
+                <input class="login100-form-btn" type="submit" value="Submit">
+            </div>
+        </form>
+
+
+    </div>
+</section>
+</body>
