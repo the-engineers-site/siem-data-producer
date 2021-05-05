@@ -27,7 +27,10 @@ format:
 
 compile:
   stage: build
+  dependencies:
+    - format
   script:
+    - go mod download
     - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/siem-data-producer
   artifacts:
     paths:
@@ -35,6 +38,8 @@ compile:
 
 docker-build:
   image: docker:latest
+  dependencies:
+    - compile
   services:
     - docker:dind
   stage: package
