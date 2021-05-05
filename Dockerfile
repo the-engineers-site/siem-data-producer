@@ -1,6 +1,8 @@
 FROM centos:8
+USER app
 WORKDIR /home/app
 
+USER root
 ARG JAR_FILE=siem-data-producer
 COPY ${JAR_FILE} siem-data-producer
 
