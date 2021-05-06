@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"os"
 	"time"
 )
 
@@ -13,7 +14,6 @@ var (
 
 func init() {
 	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-
 		// your custom format
 		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
 			param.ClientIP,
@@ -27,15 +27,23 @@ func init() {
 			param.ErrorMessage,
 		)
 	}))
-	router.Use(gin.Recovery())
 
+	initDBMigration()
+	router.Use(gin.Recovery())
 }
 
 func StartApplication() {
 	mapUrls()
 	fmt.Println("Execution started")
 	log.Info("about to start the application...")
-	err := router.Run(":8082")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8082"
+		port = "8082"
+	}
+
+	err := router.Run(":" + port)
 	if err != nil {
 		log.Fatalln("Error while starting service.", err)
 	}

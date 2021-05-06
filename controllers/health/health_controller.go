@@ -7,6 +7,6 @@ import (
 
 func Ping(c *gin.Context) {
 	resp := services.HealthService.HealthCheck()
-	c.JSON(resp.Status, resp.Message)
+	c.JSON(resp.Status, resp.Response)
 	return
 }

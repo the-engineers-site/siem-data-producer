@@ -10,10 +10,10 @@ var (
 
 type health struct{}
 
-func (h *health) HealthCheck() *http_utils.Response {
+func (h *health) HealthCheck() *http_utils.ResponseEntity {
 	return http_utils.NewOkResponse("Pong")
 }
 
 type healthServiceInterface interface {
-	HealthCheck() *http_utils.Response
+	HealthCheck() *http_utils.ResponseEntity
 }

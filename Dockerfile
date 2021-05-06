@@ -1,4 +1,6 @@
 FROM centos:8
+RUN useradd -ms /bin/bash app
+
 USER app
 WORKDIR /home/app
 

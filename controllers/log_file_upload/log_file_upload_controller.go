@@ -9,7 +9,7 @@ import (
 
 func UploadFile(c *gin.Context) {
 
-	var resp *http_utils.Response
+	var resp *http_utils.ResponseEntity
 
 	deviceType := c.PostForm("Device Type")
 	deviceVendor := c.PostForm("Device Vendor")
@@ -22,7 +22,7 @@ func UploadFile(c *gin.Context) {
 		resp = services.FileUploadService.UploadFile(deviceType, deviceVendor, file)
 	}
 
-	c.JSON(resp.Status, resp.Message)
+	c.JSON(resp.Status, resp.Response)
 	return
 
 }

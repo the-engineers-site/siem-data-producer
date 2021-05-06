@@ -11,23 +11,27 @@ const (
 	statusServerError = "SERVER_ERROR"
 )
 
-type Response struct {
-	Status  int   `json:"status"`
-	Message gin.H `json:"message"`
+type ResponseEntity struct {
+	Status   int         `json:"status"`
+	Response interface{} `json:"response"`
 }
 
-func getResponse(status int, h gin.H) *Response {
-	return &Response{Status: status, Message: h}
+func getResponse(status int, h interface{}) *ResponseEntity {
+	return &ResponseEntity{Status: status, Response: h}
 }
 
-func NewBadRequestResponse(message string) *Response {
+func NewBadRequestResponse(message string) *ResponseEntity {
 	return getResponse(http.StatusBadRequest, gin.H{"code": badRequest, "reason": message})
 }
 
-func NewOkResponse(message string) *Response {
+func NewOkResponse(message string) *ResponseEntity {
 	return getResponse(http.StatusOK, gin.H{"code": statusOk, "message": message})
 }
 
-func NewInternalServerError(message string, err error) *Response {
+func NewInternalServerError(message string, err error) *ResponseEntity {
 	return getResponse(http.StatusInternalServerError, gin.H{"code": statusServerError, "Message": message, "Error": err})
+}
+
+func NewServiceResponse(statusCode int, data interface{}) *ResponseEntity {
+	return getResponse(statusCode, data)
 }

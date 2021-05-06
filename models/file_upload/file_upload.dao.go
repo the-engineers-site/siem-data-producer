@@ -5,19 +5,31 @@ import (
 	"gitlab.com/yjagdale/siem-data-producer/utils/fileUtils"
 	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"io"
+	"mime/multipart"
+	"os"
 )
 
-func (fileUploadObject *FileUpload) Upload() *http_utils.Response {
+func (fileUploadObject *FileUpload) Upload() *http_utils.ResponseEntity {
 	var err error
 	path, err := fileUtils.CreateOutputFolder(fileUploadObject.DeviceType, fileUploadObject.DeviceVendor)
 	if err == nil {
 		log.Infoln("Directory Created. Copying file contents")
 		file, err := fileUploadObject.File.Open()
 		if err == nil {
-			defer file.Close()
+			defer func(file multipart.File) {
+				err := file.Close()
+				if err != nil {
+
+				}
+			}(file)
 			outputFile, err := fileUtils.CreateFile(path + "/" + fileUploadObject.File.Filename)
 			if err == nil {
-				defer outputFile.Close()
+				defer func(outputFile *os.File) {
+					err := outputFile.Close()
+					if err != nil {
+
+					}
+				}(outputFile)
 				_, err = io.Copy(outputFile, file)
 				if err == nil {
 					return http_utils.NewOkResponse("File Uploaded successfully")

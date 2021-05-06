@@ -11,13 +11,13 @@ import (
 var FileUploadService fileUploadInterface = &fileUploadService{}
 
 type fileUploadInterface interface {
-	UploadFile(string, string, *multipart.FileHeader) *http_utils.Response
+	UploadFile(string, string, *multipart.FileHeader) *http_utils.ResponseEntity
 }
 
 type fileUploadService struct {
 }
 
-func (h *fileUploadService) UploadFile(deviceType string, deviceVendor string, file *multipart.FileHeader) *http_utils.Response {
+func (h *fileUploadService) UploadFile(deviceType string, deviceVendor string, file *multipart.FileHeader) *http_utils.ResponseEntity {
 	log.Infoln("Processing request for upload file.", deviceType, "vendor:", deviceVendor)
 
 	filename := filepath.Base(file.Filename)

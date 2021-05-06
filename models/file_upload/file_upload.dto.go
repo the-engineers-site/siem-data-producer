@@ -2,15 +2,17 @@ package file_upload
 
 import (
 	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
+	"gorm.io/gorm"
 	"mime/multipart"
 	"path/filepath"
 	"regexp"
 )
 
 type FileUpload struct {
+	gorm.Model
 	DeviceType   string
 	DeviceVendor string
-	File         *multipart.FileHeader
+	File         *multipart.FileHeader `gorm:"type:blob"`
 }
 
 var validFormats = map[string]bool{
@@ -18,7 +20,7 @@ var validFormats = map[string]bool{
 	".log": true,
 }
 
-func (fileUploadObject *FileUpload) Validate() *http_utils.Response {
+func (fileUploadObject *FileUpload) Validate() *http_utils.ResponseEntity {
 	if fileUploadObject.DeviceVendor == "" {
 		return http_utils.NewBadRequestResponse("Device Vendor is empty")
 	}
