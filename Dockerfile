@@ -5,6 +5,9 @@ USER app
 WORKDIR /home/app
 
 USER root
+
+RUN chown app:app /home/app
+
 ARG JAR_FILE=siem-data-producer
 COPY ${JAR_FILE} siem-data-producer
 
