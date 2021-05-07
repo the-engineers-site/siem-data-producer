@@ -12,7 +12,6 @@ This utility to produce data on any tcp or udp destinations. built in golang
 | DB_PATH | <b>/storage/database <br>or<br> ./ | <b><u>Inside Container:</b></u> Default path will be /storage/app<br> <b><u>On System:</b></u> it will be present working dir|
 
 ## Deployment
-___
 
 ### Docker based deployment
 
