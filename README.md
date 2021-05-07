@@ -9,10 +9,9 @@ This utility to produce data on any tcp or udp destinations. built in golang
 | Variable | Default Value | Possible Values |
 | :---: | :---: | :---: | 
 | LOG_LEVEL | <b>INFO | <b>DEBUG</b> - To Run application in debug logging mode <br> ERROR - To Run application in Error logging mode |
-| DB_PATH | <b>/home/app <br> ./ | inside Container: Default path will be /home/app<br> On System it will be present working dir|
+| DB_PATH | <b>/storage/database <br>or<br> ./ | <b><u>Inside Container:</b></u> Default path will be /storage/app<br> <b><u>On System:</b></u> it will be present working dir|
 
 ## Deployment
-
 ___
 
 ### Docker based deployment
