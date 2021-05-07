@@ -41,7 +41,7 @@ func ValidateConnection() bool {
 		}
 	}
 	health := health_models.Health{}
-	err := databaseConnection.Model(health_models.Health{}).Select(&health).Error
+	err := databaseConnection.Model(health_models.Health{}).First(&health).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		log.Errorln("Error while checking health", err)
 		return false
