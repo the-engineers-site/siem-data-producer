@@ -10,7 +10,6 @@ before_script:
   - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
   - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
   - cd $GOPATH/src/$REPO_NAME
-  - ls -ltra
 
 stages:
   - test
@@ -42,6 +41,6 @@ docker-build:
     - docker:dind
   stage: package
   script:
-    - docker build -t registry.gitlab.com/yjagdale/siem-data-producer .
+    - docker build -t registry.gitlab.com/yjagdale/siem-data-producer:$CI_COMMIT_SHORT_SHA .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker push registry.gitlab.com/yjagdale/siem-data-producer
+    - docker push registry.gitlab.com/yjagdale/siem-data-producer:$CI_COMMIT_SHORT_SHA
