@@ -20,11 +20,16 @@ func connectDB() (*gorm.DB, error) {
 	log.Infoln("Connecting to database")
 	dbPath = os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "database.db"
+		dbPath = "/storage/database/database.db"
+		err = os.MkdirAll("/storage/database", 0777)
+		if err != nil {
+			log.Errorln("Error while creating database directory", err)
+		}
 	} else {
 		log.Infoln("DB path provided in env, Using", dbPath)
 		dbPath = dbPath + "/database.db"
 	}
+
 	databaseConnection, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
 	log.Debugln("Connected ", err == nil)
 	return databaseConnection, err
