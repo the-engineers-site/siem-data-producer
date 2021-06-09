@@ -1,15 +1,11 @@
-# This file is a template, and might need editing before it works on your project.
 image: golang:latest
 
 variables:
   # Please edit to your GitLab project
-  REPO_NAME: gitlab.com/yjagdale/siem-data-producer
+  REPO_NAME: gitlab.com/Team-R1A3/frontend-aws
+  DOCKER_REPO_NAME: registry.gitlab.com/team-r1a3/frontend-aws
+  CI_REGISTRY: registry.gitlab.com
   DOCKER_DRIVER: overlay
-
-before_script:
-  - mkdir -p $GOPATH/src/$(dirname $REPO_NAME)
-  - ln -svf $CI_PROJECT_DIR $GOPATH/src/$REPO_NAME
-  - cd $GOPATH/src/$REPO_NAME
 
 stages:
   - test
@@ -18,21 +14,32 @@ stages:
 
 format:
   stage: test
+  image: node
   script:
-    - go mod download
-    - go fmt $(go list ./... | grep -v /vendor/)
-    - go vet $(go list ./... | grep -v /vendor/)
-    - go test -race $(go list ./... | grep -v /vendor/)
+    - echo "Start building App"
+    - npm install
+    - npm build
+    - echo "Test successfully!"
 
 compile:
   stage: build
   needs: [ "format" ]
   script:
-    - go mod download
-    - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/siem-data-producer
-  artifacts:
+    - echo "Start building App"
+    - npm install
+    - npm build
+    - echo "Build successfully!"
+  cache: &global_cache
+    key: ${CI_COMMIT_REF_SLUG}
     paths:
-      - $CI_PROJECT_DIR/siem-data-producer
+      - node_modules/
+      - public/
+      - vendor/
+    policy: pull-push
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - build
 
 docker-build:
   image: docker:latest
@@ -40,8 +47,11 @@ docker-build:
   services:
     - docker:dind
   stage: package
-  script:
-    - docker build -t registry.gitlab.com/yjagdale/siem-data-producer:$CI_COMMIT_SHORT_SHA -tregistry.gitlab.com/yjagdale/siem-data-producer .
+  before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker push registry.gitlab.com/yjagdale/siem-data-producer
-    - docker push registry.gitlab.com/yjagdale/siem-data-producer:$CI_COMMIT_SHORT_SHA
+
+  script:
+    - docker build -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" -t "$DOCKER_REPO_NAME" .
+    - docker build --pull -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" .
+    - docker push "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA"
+    - echo "Registry image:" $DOCKER_REPO_NAME
