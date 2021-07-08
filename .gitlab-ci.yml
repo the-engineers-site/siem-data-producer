@@ -24,7 +24,7 @@ before_script:
 
 stages:
   - test
-  - compile
+  - build
   - deploy
 
 format:
@@ -44,10 +44,9 @@ compile:
 
 deploy:
   image: docker:latest
-  needs: [ "format", "compile" ]
   services:
     - docker:dind
-  stage: package
+  stage: deploy
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
   script:
