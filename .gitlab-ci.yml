@@ -42,7 +42,7 @@ compile:
     paths:
       - siem-data-producer
 
-docker-build:
+deploy:
   image: docker:latest
   needs: [ "format", "compile" ]
   services:
@@ -50,7 +50,6 @@ docker-build:
   stage: package
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-
   script:
     - docker build -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" -t "$DOCKER_REPO_NAME" .
     - docker build --pull -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" .
