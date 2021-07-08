@@ -40,9 +40,8 @@ func StartApplication() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8082"
-		port = "8082"
 	}
-
+	log.Infoln("Starting application on :", port)
 	err := router.Run(":" + port)
 	if err != nil {
 		log.Fatalln("Error while starting service.", err)
