@@ -20,7 +20,7 @@ func connectDB() (*gorm.DB, error) {
 	log.Infoln("Connecting to database")
 	dbPath = os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "/storage/database/database.db"
+		dbPath = "/tmp/storage/database/database.db"
 		err = os.MkdirAll("/storage/database", 0777)
 		if err != nil {
 			log.Errorln("Error while creating database directory", err)

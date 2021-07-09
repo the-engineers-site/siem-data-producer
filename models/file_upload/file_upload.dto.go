@@ -9,10 +9,16 @@ import (
 )
 
 type FileUpload struct {
-	gorm.Model
 	DeviceType   string
 	DeviceVendor string
 	File         *multipart.FileHeader `gorm:"type:blob"`
+}
+
+type UploadedFile struct {
+	gorm.Model
+	DeviceType   string `gorm:"not null"`
+	DeviceVendor string `gorm:"not null"`
+	Path         string `gorm:"not null"`
 }
 
 var validFormats = map[string]bool{

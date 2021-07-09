@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	FileUploadFolder = "/storage/logs/"
+	FileUploadFolder = "/tmp/storage/logs/"
 	Permissions      = 0777
 )
 
@@ -23,4 +23,8 @@ func formatPath(path string) string {
 
 func CreateFile(path string) (*os.File, error) {
 	return os.Create(path)
+}
+
+func RemoveFile(path string) error {
+	return os.Remove(path)
 }

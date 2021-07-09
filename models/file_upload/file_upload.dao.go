@@ -2,6 +2,7 @@ package file_upload
 
 import (
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/database"
 	"gitlab.com/yjagdale/siem-data-producer/utils/fileUtils"
 	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"io"
@@ -10,7 +11,7 @@ import (
 )
 
 func (fileUploadObject *FileUpload) Upload() *http_utils.ResponseEntity {
-	var err error
+	db, err := database.GetDBConnection()
 	path, err := fileUtils.CreateOutputFolder(fileUploadObject.DeviceType, fileUploadObject.DeviceVendor)
 	if err == nil {
 		log.Infoln("Directory Created. Copying file contents")
@@ -31,11 +32,34 @@ func (fileUploadObject *FileUpload) Upload() *http_utils.ResponseEntity {
 					}
 				}(outputFile)
 				_, err = io.Copy(outputFile, file)
-				if err == nil {
-					return http_utils.NewOkResponse("File Uploaded successfully")
+				if err != nil {
+					return http_utils.NewInternalServerError("Failed to upload file", err)
 				}
+
+				err := db.Save(&UploadedFile{
+					DeviceType:   fileUploadObject.DeviceType,
+					DeviceVendor: fileUploadObject.DeviceVendor,
+					Path:         path + "/" + fileUploadObject.File.Filename,
+				})
+				if err.Error != nil {
+					log.Errorln("Error while storing to db", err.Error)
+					resp := http_utils.NewInternalServerError("Unexpected Error", err.Error)
+					fileUploadObject.rollbackChanges(path)
+					return resp
+				}
+				return http_utils.NewOkResponse("File Uploaded success")
 			}
 		}
 	}
 	return http_utils.NewInternalServerError("Error while storing file content", err)
+}
+
+func (fileUploadObject *FileUpload) rollbackChanges(path string) {
+	log.Infoln("Rolling back changes")
+
+	err := fileUtils.RemoveFile(path + "/" + fileUploadObject.File.Filename)
+
+	if err != nil {
+		log.Errorln("Error while rolling back", err)
+	}
 }

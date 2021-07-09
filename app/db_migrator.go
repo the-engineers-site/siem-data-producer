@@ -18,7 +18,7 @@ func initDBMigration() {
 		panic(1)
 	}
 
-	migrationError := db.AutoMigrate(&configuration.Configuration{}, &file_upload.FileUpload{}, &health_models.Health{})
+	migrationError := db.AutoMigrate(&configuration.Configuration{}, &file_upload.UploadedFile{}, &health_models.Health{})
 
 	if migrationError != nil {
 		log.Fatalln("Error while migrating database", migrationError)
