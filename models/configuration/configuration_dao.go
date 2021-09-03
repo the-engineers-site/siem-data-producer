@@ -1,7 +1,9 @@
 package configuration
 
 import (
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/constants"
 	"gitlab.com/yjagdale/siem-data-producer/database"
 	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"net/http"
@@ -14,7 +16,7 @@ func (config *Configuration) Save() *http_utils.ResponseEntity {
 		return http_utils.NewInternalServerError("Unable to save to database", err)
 	}
 	db.Model(&Configuration{}).Save(config)
-	return http_utils.NewOkResponse("Save successfully")
+	return http_utils.NewOkResponse(constants.ResponseSave)
 }
 
 func (config *Configuration) Get() *http_utils.ResponseEntity {
@@ -42,9 +44,20 @@ func (config *Configuration) GetAll() *http_utils.ResponseEntity {
 }
 
 func (config *Configuration) Update() *http_utils.ResponseEntity {
-	return http_utils.NewOkResponse("Updated successfully")
+	return http_utils.NewOkResponse(constants.ResponseUpdate)
 }
 
 func (config *Configuration) Delete() *http_utils.ResponseEntity {
-	return http_utils.NewOkResponse("Delete successfully")
+	db, err := database.GetDBConnection()
+	if database.ValidateConnection() {
+		err := db.Delete(config)
+		if err != nil {
+			log.Errorln("Error while deleting the config")
+			return http_utils.NewServiceResponse(http.StatusBadRequest, gin.H{"Message": "Unable to delete record"})
+		} else {
+			return http_utils.NewOkResponse(constants.ResponseDelete)
+		}
+	} else {
+		return http_utils.NewInternalServerError("Unable to connect to db", err)
+	}
 }

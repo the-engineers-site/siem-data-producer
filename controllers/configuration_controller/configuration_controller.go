@@ -3,9 +3,11 @@ package configuration_controller
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/constants"
 	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
 	"gitlab.com/yjagdale/siem-data-producer/services"
 	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
+	"net/http"
 	"strconv"
 )
 
@@ -15,7 +17,7 @@ func SaveConfiguration(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&config)
 	if err != nil {
-		resp = http_utils.NewBadRequestResponse("Invalid body")
+		resp = http_utils.NewBadRequestResponse("Invalid body. Error:" + err.Error())
 	} else {
 		log.Infoln("Storing configuration")
 		resp = services.ConfigurationService.SaveConfig(&config)
@@ -41,15 +43,27 @@ func UpdateConfiguration(c *gin.Context) {
 
 func DeleteConfiguration(c *gin.Context) {
 	var resp *http_utils.ResponseEntity
-	var config configuration.Configuration
+	var config []int
+	id := c.Param("id")
 
-	err := c.ShouldBindJSON(&config)
-	if err != nil {
-		resp = http_utils.NewOkResponse("Invalid body")
+	if id != "" {
+		log.Infoln("Deleting configuration with object", id)
+		intId, err := strconv.Atoi(id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, http_utils.NewBadRequestResponse(constants.ErrorInvalidInput))
+			return
+		}
+		config[0] = intId
 	} else {
-		log.Infoln("Storing configuration")
-		resp = services.ConfigurationService.DeleteConfig(&config)
+		err := c.ShouldBindJSON(&config)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, http_utils.NewOkResponse(constants.ResponseBadRequest+err.Error()))
+			return
+		}
+		log.Infoln("Deleting object", config)
+
 	}
+	resp = services.ConfigurationService.DeleteConfig(config)
 	c.JSON(resp.Status, resp)
 	return
 }

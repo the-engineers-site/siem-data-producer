@@ -2,6 +2,7 @@ package database
 
 import (
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/constants"
 	"gitlab.com/yjagdale/siem-data-producer/models/health_models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -20,14 +21,14 @@ func connectDB() (*gorm.DB, error) {
 	log.Infoln("Connecting to database")
 	dbPath = os.Getenv("DB_PATH")
 	if dbPath == "" {
-		dbPath = "/tmp/storage/database/database.db"
-		err = os.MkdirAll("/storage/database", 0777)
+		dbPath = constants.DefaultDbPath
+		err = os.MkdirAll(constants.DefaultDbPath, 0777)
 		if err != nil {
 			log.Errorln("Error while creating database directory", err)
 		}
 	} else {
 		log.Infoln("DB path provided in env, Using", dbPath)
-		dbPath = dbPath + "/database.db"
+		dbPath = dbPath + "/" + constants.DefaultDbName
 	}
 
 	databaseConnection, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
