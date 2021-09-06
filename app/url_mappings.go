@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/thinkerou/favicon"
 	"gitlab.com/yjagdale/siem-data-producer/controllers/configuration_controller"
 	"gitlab.com/yjagdale/siem-data-producer/controllers/health_controller"
 	"gitlab.com/yjagdale/siem-data-producer/controllers/log_file_upload"
@@ -12,8 +13,15 @@ func mapUrls() {
 
 	// file upload controllers
 	router.Static("/ui", "./static")
+	router.Use(favicon.New("./static/favicon.ico"))
 	router.POST("/file/upload", log_file_upload.UploadFile)
 
+	configurationMapping()
+	health()
+	producer()
+}
+
+func configurationMapping() {
 	// configuration controllers
 	configurationRoutes := router.Group("/configuration")
 	configurationRoutes.GET("/", configuration_controller.GetConfiguration)
@@ -21,12 +29,15 @@ func mapUrls() {
 	configurationRoutes.POST("/", configuration_controller.SaveConfiguration)
 	configurationRoutes.DELETE("/", configuration_controller.DeleteConfiguration)
 	configurationRoutes.PUT("/", configuration_controller.UpdateConfiguration)
+}
 
+func health() {
 	// health controllers
 	router.GET("/health", health_controller.Health)
+}
 
+func producer() {
 	// producer controller
 	producerController := router.Group("/produce")
 	producerController.GET("/", producer_controller.Produce)
-
 }
