@@ -28,6 +28,7 @@ func configurationMapping() {
 	configurationRoutes.GET("/:id", configuration_controller.GetConfiguration)
 	configurationRoutes.POST("/", configuration_controller.SaveConfiguration)
 	configurationRoutes.DELETE("/", configuration_controller.DeleteConfiguration)
+	configurationRoutes.DELETE("/:id", configuration_controller.DeleteConfiguration)
 	configurationRoutes.PUT("/", configuration_controller.UpdateConfiguration)
 }
 

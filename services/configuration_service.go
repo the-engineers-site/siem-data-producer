@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"net/http"
 )
 
@@ -13,51 +12,54 @@ var (
 )
 
 type ConfigurationServiceInterface interface {
-	SaveConfig(configuration *configuration.Configuration) *http_utils.ResponseEntity
-	UpdateConfig(configuration *configuration.Configuration) *http_utils.ResponseEntity
-	DeleteConfig(configuration []int) *http_utils.ResponseEntity
-	GetConfig(configuration *configuration.Configuration) *http_utils.ResponseEntity
+	SaveConfig(configuration *configuration.Configuration) configuration.Response
+	UpdateConfig(configuration *configuration.Configuration) configuration.Response
+	DeleteConfig(configuration []int) *configuration.Response
+	GetConfig(configuration *configuration.Configuration) configuration.Response
 }
 
 type configurationService struct {
 }
 
-func (c *configurationService) UpdateConfig(configuration *configuration.Configuration) *http_utils.ResponseEntity {
+func (c *configurationService) UpdateConfig(configuration *configuration.Configuration) configuration.Response {
 	return configuration.Update()
 }
 
-func (c *configurationService) DeleteConfig(ids []int) *http_utils.ResponseEntity {
+func (c *configurationService) DeleteConfig(ids []int) *configuration.Response {
 	var success []int
 	var failed []int
+	var notFount []int
+	var resp = configuration.Response{}
 	for _, objectId := range ids {
 		conf := configuration.Configuration{}
 		conf.ID = uint(objectId)
 		response := conf.Delete()
-		if response.Status != 200 {
+		if response.GetStatus() == 404 {
+			notFount = append(notFount, objectId)
+		} else if response.Status != 200 {
 			failed = append(failed, objectId)
 		} else {
 			success = append(success, objectId)
 		}
 	}
-	if len(failed) == 0 {
-		return http_utils.NewServiceResponse(http.StatusOK, gin.H{"Success": success})
-	} else {
-		return http_utils.NewServiceResponse(http.StatusPartialContent, gin.H{"Success": success, "failed": failed})
-	}
-
+	resp.SetMessage(http.StatusOK, gin.H{"Success": success, "Failed": failed, "NotFound": notFount}, nil)
+	return &resp
 }
 
-func (c *configurationService) GetConfig(configuration *configuration.Configuration) *http_utils.ResponseEntity {
+func (c *configurationService) GetConfig(configuration *configuration.Configuration) configuration.Response {
 	if configuration.ID == 0 {
 		return configuration.GetAll()
 	}
 	return configuration.Get()
 }
 
-func (c configurationService) SaveConfig(configuration *configuration.Configuration) *http_utils.ResponseEntity {
-	if configuration.Validate() != nil {
+func (c configurationService) SaveConfig(config *configuration.Configuration) configuration.Response {
+	var resp configuration.Response
+	if config.Validate() != nil {
 		log.Debugln("Validation failed for configuration.")
-		return configuration.Validate()
+		err := config.Validate()
+		resp.SetMessage(http.StatusBadRequest, "validation failed", err)
+
 	}
-	return configuration.Save()
+	return config.Save()
 }

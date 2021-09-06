@@ -1,63 +1,78 @@
 package configuration
 
 import (
-	"github.com/gin-gonic/gin"
+	"errors"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
 	"gitlab.com/yjagdale/siem-data-producer/database"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"net/http"
 )
 
-func (config *Configuration) Save() *http_utils.ResponseEntity {
+func (config *Configuration) Save() Response {
+	var resp Response
 	db, err := database.GetDBConnection()
+
 	if err != nil {
 		log.Errorln("Error while saving config.", err)
-		return http_utils.NewInternalServerError("Unable to save to database", err)
+		resp.SetMessage(http.StatusInternalServerError, nil, err)
+		return resp
 	}
-	db.Model(&Configuration{}).Save(config)
-	return http_utils.NewOkResponse(constants.ResponseSave)
+	dbResponse := db.Model(&Configuration{}).Create(&config)
+	resp.SetMessage(http.StatusCreated, config, dbResponse.Error)
+	return resp
 }
 
-func (config *Configuration) Get() *http_utils.ResponseEntity {
-	db, _ := database.GetDBConnection()
-	err := db.Model(&Configuration{}).First(&config).Error
-	if err != nil {
+func (config *Configuration) Get() Response {
+	db, err := database.GetDBConnection()
+	var resp Response
+	dbError := db.Model(&Configuration{}).First(&config).Error
+	if dbError != nil {
 		log.Infoln("Error while fetching config")
-		return http_utils.NewInternalServerError("Error while fetching config", err)
+		resp.SetMessage(http.StatusInternalServerError, nil, err)
+		return resp
 	}
-	return http_utils.NewServiceResponse(http.StatusOK, config)
+	resp.SetMessage(http.StatusInternalServerError, nil, err)
+	return resp
 }
 
-func (config *Configuration) GetAll() *http_utils.ResponseEntity {
-	db, _ := database.GetDBConnection()
+func (config *Configuration) GetAll() Response {
+	var resp Response = Response{}
+	db, err := database.GetDBConnection()
 	var configurations []Configuration
 	if database.ValidateConnection() {
 		err := db.Model(&Configuration{}).Find(&configurations).Error
 		if err != nil {
 			log.Infoln("Error while fetching config")
-			return http_utils.NewInternalServerError("Error while fetching config", err)
+			resp.SetMessage(http.StatusInternalServerError, nil, err)
+			return resp
 		}
-		return http_utils.NewServiceResponse(http.StatusOK, configurations)
+		resp.SetMessage(http.StatusOK, configurations, nil)
+		return resp
 	}
-	return http_utils.NewInternalServerError("DB Connection Error", nil)
+	resp.SetMessage(http.StatusInternalServerError, "DB Connection Error", err)
+	return resp
 }
 
-func (config *Configuration) Update() *http_utils.ResponseEntity {
-	return http_utils.NewOkResponse(constants.ResponseUpdate)
+func (config *Configuration) Update() Response {
+	var resp Response
+	resp.SetMessage(http.StatusOK, "Updated successfully", nil)
+	return resp
 }
 
-func (config *Configuration) Delete() *http_utils.ResponseEntity {
+func (config *Configuration) Delete() Response {
 	db, err := database.GetDBConnection()
+	var resp Response
 	if database.ValidateConnection() {
-		err := db.Delete(config)
-		if err != nil {
-			log.Errorln("Error while deleting the config")
-			return http_utils.NewServiceResponse(http.StatusBadRequest, gin.H{"Message": "Unable to delete record"})
+		err := db.Delete(config).RowsAffected
+		if err == 0 {
+			log.Errorln("Configuration not found. Affected rows ", err)
+			resp.SetMessage(http.StatusNotFound, nil, errors.New("configuration not found"))
+			return resp
 		} else {
-			return http_utils.NewOkResponse(constants.ResponseDelete)
+			resp.SetMessage(http.StatusOK, "Configuration deleted successfully", nil)
+			return resp
 		}
 	} else {
-		return http_utils.NewInternalServerError("Unable to connect to db", err)
+		resp.SetMessage(http.StatusInternalServerError, "Internal server Error", err)
+		return resp
 	}
 }

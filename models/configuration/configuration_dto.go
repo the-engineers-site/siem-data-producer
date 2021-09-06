@@ -1,8 +1,8 @@
 package configuration
 
 import (
+	"errors"
 	"github.com/lib/pq"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"gorm.io/gorm"
 )
 
@@ -12,13 +12,13 @@ type Configuration struct {
 	OverrideValues pq.StringArray `json:"override_values" gorm:"type:text[]"`
 }
 
-func (config *Configuration) Validate() *http_utils.ResponseEntity {
+func (config *Configuration) Validate() error {
 	if config.OverrideKey == "" {
-		return http_utils.NewBadRequestResponse("Override key is not provided")
+		return errors.New("override key is not provided")
 	}
 
 	if len(config.OverrideValues) <= 0 {
-		return http_utils.NewBadRequestResponse("Override values is not provided")
+		return errors.New("override values is not provided")
 	}
 
 	return nil
