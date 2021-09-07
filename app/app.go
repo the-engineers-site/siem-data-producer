@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"gitlab.com/yjagdale/siem-data-producer/services"
-	"os"
+	"gitlab.com/yjagdale/siem-data-producer/utils/utils"
 	"time"
 )
 
@@ -52,12 +52,8 @@ func StartApplication() {
 	fmt.Println("Execution started")
 	log.Info("about to start the application...")
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8082"
-	}
-	log.Infoln("Starting application on :", port)
-	err := router.Run(":" + port)
+	log.Infoln("Starting application on :", utils.GetPort())
+	err := router.Run(":" + utils.GetPort())
 	if err != nil {
 		log.Fatalln("Error while starting service.", err)
 	}

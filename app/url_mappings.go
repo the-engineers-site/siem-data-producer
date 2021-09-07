@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"github.com/thinkerou/favicon"
@@ -9,6 +10,7 @@ import (
 	"gitlab.com/yjagdale/siem-data-producer/controllers/log_file_upload"
 	"gitlab.com/yjagdale/siem-data-producer/controllers/producer_controller"
 	_ "gitlab.com/yjagdale/siem-data-producer/docs"
+	"gitlab.com/yjagdale/siem-data-producer/utils/utils"
 )
 
 func mapUrls() {
@@ -22,7 +24,7 @@ func mapUrls() {
 	configurationMapping()
 	health()
 	producer()
-	url := ginSwagger.URL("http://localhost:8080/swagger/doc.json") // The url pointing to API definition
+	url := ginSwagger.URL(fmt.Sprintf("http://%s:%s/swagger/doc.json", utils.GetOutboundIP(), utils.GetPort()))
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 }
 

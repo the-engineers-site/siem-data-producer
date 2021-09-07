@@ -23,16 +23,8 @@ before_script:
   - cd $GOPATH/src/$REPO_NAME
 
 stages:
-  - test
   - build
   - deploy
-
-format:
-  stage: test
-  script:
-    - go fmt $(go list ./... | grep -v /vendor/)
-    - go vet $(go list ./... | grep -v /vendor/)
-    - go test -race $(go list ./... | grep -v /vendor/)
 
 compile:
   stage: build
@@ -50,7 +42,7 @@ deploy:
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
   script:
-    - docker build -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" -t "$DOCKER_REPO_NAME" .
-    - docker build --pull -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" .
+    - docker build --pull -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" -t "$DOCKER_REPO_NAME:latest" .
     - docker push "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA"
+    - docker push "$DOCKER_REPO_NAME:latest"
     - echo "Registry image:" $DOCKER_REPO_NAME
