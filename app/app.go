@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	router = gin.Default()
+	router = gin.New()
 )
 
 func init() {

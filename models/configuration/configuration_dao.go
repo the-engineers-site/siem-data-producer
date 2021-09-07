@@ -39,7 +39,7 @@ func (config *Configuration) Get() Response {
 		resp.SetMessage(http.StatusInternalServerError, nil, err)
 		return resp
 	}
-	resp.SetMessage(http.StatusInternalServerError, nil, err)
+	resp.SetMessage(http.StatusOK, config, nil)
 	return resp
 }
 

@@ -57,8 +57,10 @@ func DeleteConfiguration(c *gin.Context) {
 		intId, err := strconv.Atoi(id)
 		if err != nil {
 			resp.SetMessage(http.StatusBadRequest, "Invalid configuration ID", err)
+			c.JSON(resp.GetStatus(), resp.GetResponse())
+			return
 		}
-		config[0] = intId
+		config = append(config, intId)
 	} else {
 		err := c.ShouldBindJSON(&config)
 		if err != nil {
