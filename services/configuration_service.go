@@ -34,7 +34,7 @@ func (c *configurationService) Reload() configuration.Response {
 		constants.Executors = make(map[string]interface{})
 	}
 	for k, v := range resp.GetResponse().([]configuration.Configuration) {
-		log.Infoln("Loading", k, v.OverrideKey)
+		log.Debugln("Loading", k, v.OverrideKey)
 		constants.Executors[v.OverrideKey] = v.OverrideValues
 	}
 	resp = configuration.Response{}

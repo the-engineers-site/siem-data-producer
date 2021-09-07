@@ -73,8 +73,15 @@ func DeleteConfiguration(c *gin.Context) {
 	return
 }
 
+func GetOverrides(c *gin.Context) {
+	resp := configuration.Response{}
+	resp.SetMessage(http.StatusOK, constants.Executors, nil)
+	c.JSON(resp.GetStatus(), resp.GetResponse())
+	return
+}
+
 func GetConfiguration(c *gin.Context) {
-	var resp configuration.Response = configuration.Response{}
+	var resp = configuration.Response{}
 	log.Infoln("Fetching configuration")
 	id := c.Param("id")
 	if id == "" {

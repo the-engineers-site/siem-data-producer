@@ -19,11 +19,14 @@ func (config *Configuration) Save() Response {
 		return resp
 	}
 	dbResponse := db.Model(&Configuration{}).Create(&config).Error
-	if strings.Contains(dbResponse.Error(), "UNIQUE constraint failed") {
+	if dbResponse != nil && strings.Contains(dbResponse.Error(), "UNIQUE constraint failed") {
 		resp.SetMessage(http.StatusBadRequest, nil, gin.H{"reason": "Override key already exists", "code": 1002})
 		return resp
+	} else if dbResponse != nil {
+		resp.SetMessage(http.StatusInternalServerError, nil, dbResponse.Error())
+		return resp
 	}
-	resp.SetMessage(http.StatusCreated, config, dbResponse.Error)
+	resp.SetMessage(http.StatusCreated, config, nil)
 	return resp
 }
 

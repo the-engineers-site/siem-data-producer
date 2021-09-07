@@ -31,6 +31,7 @@ func configurationMapping() {
 	configurationRoutes.DELETE("/:id", configuration_controller.DeleteConfiguration)
 	configurationRoutes.PUT("/", configuration_controller.UpdateConfiguration)
 	configurationRoutes.POST("/reload", configuration_controller.ReloadConfiguration)
+	configurationRoutes.GET("/overrides", configuration_controller.GetOverrides)
 }
 
 func health() {

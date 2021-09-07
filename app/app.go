@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/services"
 	"os"
 	"time"
 )
@@ -29,7 +30,21 @@ func init() {
 	}))
 
 	initDBMigration()
+	initReload()
 	router.Use(gin.Recovery())
+}
+
+func initReload() {
+	ticker := time.NewTicker(55 * time.Second)
+	services.ConfigurationService.Reload()
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				services.ConfigurationService.Reload()
+			}
+		}
+	}()
 }
 
 func StartApplication() {
