@@ -2,7 +2,14 @@
 
 This utility to produce data on any tcp or udp destinations. built in golang
 
-<b><u>Build Status: <br><br><img style="align=center" src="https://gitlab.com/yjagdale/siem-data-producer/badges/master/pipeline.svg"/>
+<b><u>Build Status: <br><br><img style="align=center" src="https://gitlab.com/yjagdale/siem-data-producer/badges/master/pipeline.svg"/></u>
+
+# API Documentation:
+You can get api documentations as swagger.
+
+http://"your server ip":"port"/swagger/index.html
+<i><br><b><u><a href="http://localhost:8082/swagger/index.html"> local url </a></u></b></i> 
+
 
 # Env variable support
 
@@ -24,13 +31,13 @@ docker run --rm --name siem-data-producer registry.gitlab.com/yjagdale/siem-data
 With Persistence:
 
 ```
-docker run --rm --name siem-data-producer -v /storage:/storage -e DB_PATH=/storage registry.gitlab.com/yjagdale/siem-data-producer:latest
+docker run --rm -p 8082:8082 --name siem-data-producer -v /storage:/storage -e DB_PATH=/storage registry.gitlab.com/yjagdale/siem-data-producer:latest
 ```
 
 In Debug Mode:
 
 ```
-docker run --rm --name siem-data-producer -e LOG_LEVEL=debug -v /storage:/storage -e DB_PATH=/storage registry.gitlab.com/yjagdale/siem-data-producer:latest
+docker run --rm -d -p 8082:8082 --name siem-data-producer -e LOG_LEVEL=debug -v /storage:/storage -e DB_PATH=/storage registry.gitlab.com/yjagdale/siem-data-producer:latest
 ```
 
 ### Api Doc

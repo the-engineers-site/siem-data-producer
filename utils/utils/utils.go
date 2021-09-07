@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net"
 	"os"
@@ -14,7 +15,12 @@ func GetPort() string {
 	return port
 }
 
-func GetOutboundIP() net.IP {
+func GetOutboundIP() string {
+
+	if os.Getenv("HOST_IP") != "" {
+		return os.Getenv("HOST_IP")
+	}
+
 	conn, _ := net.Dial("udp", "8.8.8.8:80")
 	defer func(conn net.Conn) {
 		err := conn.Close()
@@ -25,5 +31,5 @@ func GetOutboundIP() net.IP {
 
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
-	return localAddr.IP
+	return fmt.Sprintf("%s", localAddr.IP)
 }
