@@ -10,3 +10,5 @@ const (
 
 	ErrorInvalidInput = "Error: Invalid Input"
 )
+
+var Executors map[string]interface{}

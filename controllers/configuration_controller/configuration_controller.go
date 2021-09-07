@@ -26,8 +26,14 @@ func SaveConfiguration(c *gin.Context) {
 	return
 }
 
+func ReloadConfiguration(c *gin.Context) {
+	resp := services.ConfigurationService.Reload()
+	c.JSON(resp.GetStatus(), resp.GetResponse())
+	return
+}
+
 func UpdateConfiguration(c *gin.Context) {
-	var resp configuration.Response = configuration.Response{}
+	var resp = configuration.Response{}
 	var config configuration.Configuration
 
 	err := c.ShouldBindJSON(&config)

@@ -8,7 +8,7 @@ import (
 
 type Configuration struct {
 	gorm.Model
-	OverrideKey    string         `json:"override_key" gorm:"not null"`
+	OverrideKey    string         `json:"override_key" gorm:"not null;unique"`
 	OverrideValues pq.StringArray `json:"override_values" gorm:"type:text[]"`
 }
 

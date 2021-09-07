@@ -30,6 +30,7 @@ func configurationMapping() {
 	configurationRoutes.DELETE("/", configuration_controller.DeleteConfiguration)
 	configurationRoutes.DELETE("/:id", configuration_controller.DeleteConfiguration)
 	configurationRoutes.PUT("/", configuration_controller.UpdateConfiguration)
+	configurationRoutes.POST("/reload", configuration_controller.ReloadConfiguration)
 }
 
 func health() {

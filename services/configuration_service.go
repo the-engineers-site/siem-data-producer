@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/constants"
 	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
 	"net/http"
 )
@@ -16,9 +17,29 @@ type ConfigurationServiceInterface interface {
 	UpdateConfig(configuration *configuration.Configuration) configuration.Response
 	DeleteConfig(configuration []int) *configuration.Response
 	GetConfig(configuration *configuration.Configuration) configuration.Response
+	Reload() configuration.Response
 }
 
 type configurationService struct {
+}
+
+func (c *configurationService) Reload() configuration.Response {
+	var config configuration.Configuration
+	resp := config.GetAll()
+
+	if resp.GetStatus() != 200 {
+		return resp
+	}
+	if constants.Executors == nil {
+		constants.Executors = make(map[string]interface{})
+	}
+	for k, v := range resp.GetResponse().([]configuration.Configuration) {
+		log.Infoln("Loading", k, v.OverrideKey)
+		constants.Executors[v.OverrideKey] = v.OverrideValues
+	}
+	resp = configuration.Response{}
+	resp.SetMessage(http.StatusOK, gin.H{"message": "Reloaded successfully"}, nil)
+	return resp
 }
 
 func (c *configurationService) UpdateConfig(configuration *configuration.Configuration) configuration.Response {

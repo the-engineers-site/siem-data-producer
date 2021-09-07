@@ -2,9 +2,11 @@ package configuration
 
 import (
 	"errors"
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"gitlab.com/yjagdale/siem-data-producer/database"
 	"net/http"
+	"strings"
 )
 
 func (config *Configuration) Save() Response {
@@ -16,7 +18,11 @@ func (config *Configuration) Save() Response {
 		resp.SetMessage(http.StatusInternalServerError, nil, err)
 		return resp
 	}
-	dbResponse := db.Model(&Configuration{}).Create(&config)
+	dbResponse := db.Model(&Configuration{}).Create(&config).Error
+	if strings.Contains(dbResponse.Error(), "UNIQUE constraint failed") {
+		resp.SetMessage(http.StatusBadRequest, nil, gin.H{"reason": "Override key already exists", "code": 1002})
+		return resp
+	}
 	resp.SetMessage(http.StatusCreated, config, dbResponse.Error)
 	return resp
 }
@@ -35,7 +41,7 @@ func (config *Configuration) Get() Response {
 }
 
 func (config *Configuration) GetAll() Response {
-	var resp Response = Response{}
+	var resp = Response{}
 	db, err := database.GetDBConnection()
 	var configurations []Configuration
 	if database.ValidateConnection() {
