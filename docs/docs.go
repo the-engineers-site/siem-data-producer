@@ -73,15 +73,16 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-				"requestBody": {
-					"description": "Optional description in *Markdown*",
-					"required": true,
-					"content": {
-						"application/json": {
-							[]
-						}
-					}
-				},
+				"parameters": [
+                    {
+                        "type": "array",
+                        "description": "request body",
+                        "name": "body",
+                        "in": "body",
+						"value": "[1,2,3]",
+                        "required": true
+                    }
+                ],
                 "summary": "Get all configurations",
                 "responses": {
                     "200": {
