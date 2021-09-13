@@ -30,7 +30,7 @@ func mapUrls() {
 
 func configurationMapping() {
 	// configuration controllers
-	configurationRoutes := router.Group("/configuration")
+	configurationRoutes := router.Group("/v1/configuration")
 	configurationRoutes.GET("/", configuration_controller.GetConfiguration)
 	configurationRoutes.GET("/:id", configuration_controller.GetConfiguration)
 	configurationRoutes.POST("/", configuration_controller.SaveConfiguration)

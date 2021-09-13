@@ -5,8 +5,6 @@ package docs
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"gitlab.com/yjagdale/siem-data-producer/utils/utils"
 	"strings"
 	"text/template"
 
@@ -15,7 +13,7 @@ import (
 
 var doc = `{
     "schemes": {{ marshal .Schemes }},
-    "swagger": "2.0",
+    "openapi": "3.0.0",
     "info": {
         "description": "{{.Description}}",
         "title": "{{.Title}}",
@@ -31,8 +29,33 @@ var doc = `{
         },
         "version": "{{.Version}}"
     },
-    "host": "{{.Host}}",
-    "basePath": "{{.BasePath}}",
+	"servers": [
+    	{
+      		"url": "{protocol}://{server_host}:{port}/{api_version}",
+      		"variables": {
+			  "protocol": {
+				"enum": [
+      		      "https",
+				  "http"
+      		    ],
+      		    "default": "http"
+			  },
+      		  "server_host": {
+      		    "default": "192.168.43.187",
+      		    "description": "desc"
+      		  },
+      		  "port": {
+      		    "enum": [
+      		      "8080"
+      		    ],
+      		    "default": "8080"
+      		  },
+      		  "api_version": {
+      		    "default": "v1"
+      		  }
+      		}
+		}
+  	],
     "paths": {
         "/configuration": {
             "get": {
@@ -79,8 +102,8 @@ var doc = `{
                         "description": "request body",
                         "name": "body",
                         "in": "body",
-						"value": "[1,2,3]",
-                        "required": true
+                        "required": true,
+						"example": "[1,2,3]"
                     }
                 ],
                 "summary": "Get all configurations",
@@ -122,7 +145,8 @@ var doc = `{
                         "description": "configuration ID",
                         "name": "id",
                         "in": "path",
-                        "required": true
+                        "required": true,
+						"example": 4
                     }
                 ],
                 "responses": {
@@ -161,7 +185,8 @@ var doc = `{
                         "description": "configuration ID",
                         "name": "id",
                         "in": "path",
-                        "required": true
+                        "required": true,
+						"example": 4
                     }
                 ],
                 "responses": {
@@ -214,11 +239,9 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
-	Host:        fmt.Sprintf("%s:%s", utils.GetOutboundIP(), utils.GetPort()),
-	BasePath:    "/",
 	Schemes:     []string{},
-	Title:       "Swagger Example API",
-	Description: "This is a sample server celler server.",
+	Title:       "SIEM data producer data model",
+	Description: "This utility can be used to produce data for multiple channels",
 }
 
 type s struct{}
