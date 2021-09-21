@@ -5,227 +5,13 @@ package docs
 import (
 	"bytes"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"strings"
 	"text/template"
 
 	"github.com/swaggo/swag"
 )
-
-var doc = `{
-    "schemes": {{ marshal .Schemes }},
-    "openapi": "3.0.0",
-    "info": {
-        "description": "{{.Description}}",
-        "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
-        "version": "{{.Version}}"
-    },
-	"servers": [
-    	{
-      		"url": "{protocol}://{server_host}:{port}/{api_version}",
-      		"variables": {
-			  "protocol": {
-				"enum": [
-      		      "https",
-				  "http"
-      		    ],
-      		    "default": "http"
-			  },
-      		  "server_host": {
-      		    "default": "192.168.43.187",
-      		    "description": "desc"
-      		  },
-      		  "port": {
-      		    "enum": [
-      		      "8080"
-      		    ],
-      		    "default": "8080"
-      		  },
-      		  "api_version": {
-      		    "default": "v1"
-      		  }
-      		}
-		}
-  	],
-    "paths": {
-        "/configuration": {
-            "get": {
-                "description": "get all configurations",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get all configurations",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "BAD request!",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    },
-                    "404": {
-                        "description": "Can not find",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    }
-                }
-			},
-			"delete": {
-                "description": "delete configurations",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-				"parameters": [
-                    {
-                        "type": "array",
-                        "description": "request body",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-						"example": "[1,2,3]"
-                    }
-                ],
-                "summary": "Get all configurations",
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "BAD request!",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    },
-                    "404": {
-                        "description": "Can not find",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    }
-                }
-            }
-        },
-		"/configuration/{id}": {
-			"delete": {
-                "description": "delete configurations by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "delete configuration by id",
-				"parameters": [
-                    {
-                        "type": "integer",
-                        "description": "configuration ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-						"example": 4
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "BAD request!",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    },
-                    "404": {
-                        "description": "Can not find",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    }
-                }
-            },
-            "get": {
-                "description": "get configurations by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get configuration by id",
-				"parameters": [
-                    {
-                        "type": "integer",
-                        "description": "configuration ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-						"example": 4
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "BAD request!",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    },
-                    "404": {
-                        "description": "Can not find",
-                        "schema": {
-                            "$ref": "#/definitions/web.APIError"
-                        }
-                    }
-                }
-            }
-        }
-    },
-    "definitions": {
-        "web.APIError": {
-            "type": "object",
-            "properties": {
-                "errorCode": {
-                    "type": "integer"
-                },
-                "errorMessage": {
-                    "type": "string"
-                }
-            }
-        }
-    }
-}`
 
 type swaggerInfo struct {
 	Version     string
@@ -247,6 +33,10 @@ var SwaggerInfo = swaggerInfo{
 type s struct{}
 
 func (s *s) ReadDoc() string {
+	b, err := ioutil.ReadFile("/Users/yjagdale/Documents/CODE/opensource/siem-data-producer-v2/docs/doc.json")
+	if err != nil {
+		log.Error(err)
+	}
 	sInfo := SwaggerInfo
 	sInfo.Description = strings.Replace(sInfo.Description, "\n", "\\n", -1)
 
@@ -262,14 +52,14 @@ func (s *s) ReadDoc() string {
 			str = strings.Replace(str, "\"", "\\\"", -1)
 			return strings.Replace(str, "\\\\\"", "\\\\\\\"", -1)
 		},
-	}).Parse(doc)
+	}).Parse(string(b))
 	if err != nil {
-		return doc
+		return string(b)
 	}
 
 	var tpl bytes.Buffer
 	if err := t.Execute(&tpl, sInfo); err != nil {
-		return doc
+		return string(b)
 	}
 
 	return tpl.String()

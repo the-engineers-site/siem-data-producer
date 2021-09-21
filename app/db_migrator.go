@@ -6,6 +6,8 @@ import (
 	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
 	"gitlab.com/yjagdale/siem-data-producer/models/file_upload"
 	"gitlab.com/yjagdale/siem-data-producer/models/health_models"
+	"gitlab.com/yjagdale/siem-data-producer/models/producer"
+	"gitlab.com/yjagdale/siem-data-producer/models/profile"
 	"time"
 )
 
@@ -18,7 +20,12 @@ func initDBMigration() {
 		panic(1)
 	}
 
-	migrationError := db.AutoMigrate(&configuration.Configuration{}, &file_upload.UploadedFile{}, &health_models.Health{})
+	migrationError := db.AutoMigrate(
+		&configuration.Configuration{},
+		&profile.Profile{},
+		&file_upload.UploadedFile{},
+		&health_models.Health{},
+		&producer.Producer{})
 
 	if migrationError != nil {
 		log.Fatalln("Error while migrating database", migrationError)
