@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
@@ -12,12 +11,27 @@ import (
 	"gitlab.com/yjagdale/siem-data-producer/controllers/producer_controller"
 	"gitlab.com/yjagdale/siem-data-producer/controllers/profile_controller"
 	_ "gitlab.com/yjagdale/siem-data-producer/docs"
-	"gitlab.com/yjagdale/siem-data-producer/utils/utils"
+	"os"
 )
 
 var api *gin.RouterGroup
 
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		c.Header("Access-Control-Allow-Origin", "*")
+		c.Header("Access-Control-Allow-Headers", "*")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
 func mapUrls() {
+	router.Use(CORSMiddleware())
 	router.GET("/ping", health_controller.Ping)
 
 	// file upload controllers
@@ -29,8 +43,14 @@ func mapUrls() {
 	profileMapping()
 	health()
 	producerMapping()
-	url := ginSwagger.URL(fmt.Sprintf("http://%s:%s/swagger/doc.json", utils.GetOutboundIP(), utils.GetPort()))
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+	var path string
+	if os.Getenv("IP_ADDR") != "" {
+		path = ginSwagger.URL(os.Getenv("IP_ADDR"))
+	} else {
+		path = ginSwagger.URL("http://localhost:8082/swagger/doc.json")
+	}
+	url := ginSwagger.URL(path)
+	router.Use(CORSMiddleware()).GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 }
 
 func configurationMapping() {
