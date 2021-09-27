@@ -6,17 +6,13 @@ WORKDIR /home/app
 
 USER root
 
-RUN chown app:app /home/app
-
 ARG JAR_FILE=siem-data-producer
 COPY ${JAR_FILE} siem-data-producer
-
-RUN chown app:app siem-data-producer
 
 ADD static static
 ADD docs docs
 
-RUN chown -R app:app static
+RUN chown -R app:app /home/app
 
 USER app
 

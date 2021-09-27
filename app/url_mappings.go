@@ -45,9 +45,9 @@ func mapUrls() {
 	producerMapping()
 	var path string
 	if os.Getenv("IP_ADDR") != "" {
-		path = ginSwagger.URL(os.Getenv("IP_ADDR"))
+		path = os.Getenv("IP_ADDR")
 	} else {
-		path = ginSwagger.URL("http://localhost:8082/swagger/doc.json")
+		path = "http://localhost:8082/swagger/doc.json"
 	}
 	url := ginSwagger.URL(path)
 	router.Use(CORSMiddleware()).GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
