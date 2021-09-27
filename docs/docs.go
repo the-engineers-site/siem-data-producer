@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
+	"os"
 	"strings"
 	"text/template"
 
@@ -25,6 +26,7 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
+	Host:        os.Getenv("IP"),
 	Schemes:     []string{},
 	Title:       "SIEM data producer data model",
 	Description: "This utility can be used to produce data for multiple channels",

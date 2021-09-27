@@ -45,6 +45,7 @@ github.com/go-playground/universal-translator v0.17.0 h1:icxd5fm+REJzpZx7ZfpaD87
 github.com/go-playground/universal-translator v0.17.0/go.mod h1:UkSxE5sNxxRwHyU+Scu5vgOQjsIJAF8j9muTVoKLVtA=
 github.com/go-playground/validator/v10 v10.4.1 h1:pH2c5ADXtd66mxoE0Zm9SUhxE20r7aM3F26W0hOn+GE=
 github.com/go-playground/validator/v10 v10.4.1/go.mod h1:nlOn6nFhuKACm19sB/8EGNn9GlaMV7XkbRSipzJ0Ii4=
+github.com/gofrs/uuid v4.0.0+incompatible/go.mod h1:b2aQJv3Z4Fp6yNu3cdSllBxTCLRxnplIgP/c0N/04lM=
 github.com/golang/protobuf v1.2.0/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/golang/protobuf v1.3.3 h1:gyjaxf+svBWX08ZjK86iN9geUJF0H6gp2IRKX6Nf6/I=
 github.com/golang/protobuf v1.3.3/go.mod h1:vzj43D7+SQXF/4pzW/hwtAqwc6iTitCiVSaWz5lYuqw=
@@ -92,6 +93,7 @@ github.com/pkg/errors v0.8.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+github.com/shopspring/decimal v1.2.0/go.mod h1:DKyhrW/HYNuLGql+MJL6WCR6knT2jwCFRcu2hWCYk4o=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.8.1 h1:dJKuHgqk1NNQlqoA6BTlM1Wf9DOH3NBjQyu0h9+AZZE=
 github.com/sirupsen/logrus v1.8.1/go.mod h1:yWOB1SBYBC5VeMP7gHvWumXLIWorT60ONWic61uBYv0=
@@ -108,8 +110,8 @@ github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2/go.mod h1:lKJPbtWzJ9J
 github.com/swaggo/gin-swagger v1.3.1 h1:mO9MU8O99WX+RM3jekzOV54g9Fo+Nbkk7rgrN1u9irM=
 github.com/swaggo/gin-swagger v1.3.1/go.mod h1:Z6NtRBK2PRig0EUmy1Xu75CnCEs6vGYu9QZd/QWRYKU=
 github.com/swaggo/swag v1.5.1/go.mod h1:1Bl9F/ZBpVWh22nY0zmYyASPO1lI/zIwRDrpZU+tv8Y=
-github.com/swaggo/swag v1.7.1 h1:gY9ZakXlNWg/i/v5bQBic7VMZ4teq4m89lpiao74p/s=
-github.com/swaggo/swag v1.7.1/go.mod h1:gAiHxNTb9cIpNmA/VEGUP+CyZMCP/EW7mdtc8Bny+p8=
+github.com/swaggo/swag v1.7.3 h1:ucB7irEdRrhjmW+Z1Ss4GjO68oPKQFjSgOR8BCAvcbU=
+github.com/swaggo/swag v1.7.3/go.mod h1:zD8h6h4SPv7t3l+4BKdRquqW1ASWjKZgT6Qv9z3kNqI=
 github.com/thinkerou/favicon v0.1.0 h1:eWMISKTpHq2G8HOuKn7ydD55j5DDehx94b0C2y8ABMs=
 github.com/thinkerou/favicon v0.1.0/go.mod h1:HL7Pap5kOluZv1ku34pZo/AJ44GaxMEPFZ3pmuexV2s=
 github.com/ugorji/go v1.1.7/go.mod h1:kZn38zHttfInRq0xu/PH0az30d+z6vm202qpg1oXVMw=
