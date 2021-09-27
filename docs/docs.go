@@ -35,7 +35,7 @@ var SwaggerInfo = swaggerInfo{
 type s struct{}
 
 func (s *s) ReadDoc() string {
-	b, err := ioutil.ReadFile("doc.json")
+	b, err := ioutil.ReadFile("/home/app/docs/doc.json")
 	if err != nil {
 		log.Error(err)
 	}
