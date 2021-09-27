@@ -14,6 +14,7 @@ COPY ${JAR_FILE} siem-data-producer
 RUN chown app:app siem-data-producer
 
 ADD static static
+ADD docs docs
 
 RUN chown -R app:app static
 

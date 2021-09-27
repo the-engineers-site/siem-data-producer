@@ -33,7 +33,7 @@ var SwaggerInfo = swaggerInfo{
 type s struct{}
 
 func (s *s) ReadDoc() string {
-	b, err := ioutil.ReadFile("/Users/yjagdale/Documents/CODE/opensource/siem-data-producer-v2/docs/doc.json")
+	b, err := ioutil.ReadFile("doc.json")
 	if err != nil {
 		log.Error(err)
 	}
