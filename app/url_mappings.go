@@ -45,7 +45,7 @@ func mapUrls() {
 	producerMapping()
 	var path string
 	if os.Getenv("IP_ADDR") != "" {
-		path = os.Getenv("IP_ADDR")
+		path = os.Getenv("IP_ADDR") + "/swagger/doc.json"
 	} else {
 		path = "http://localhost:8082/swagger/doc.json"
 	}
