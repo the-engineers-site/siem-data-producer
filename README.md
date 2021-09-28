@@ -48,3 +48,39 @@ Get:
 ```langurage:shell
 curl --location --request GET 'http://localhost:8080/configuration/'
 ```
+
+Configuration will hold all the override which you want to apply in line while producing.
+
+To Create:
+```json
+{
+  "override_key": "date_format_10",
+  "override_values": [
+    "FUNCTION::DATE::Jan 2 15:04:05"
+  ]
+}
+```
+
+Override Key: will be the string that will be replaced from the actual log line.
+Override_value: value that needs to be substituted in place of override key in actual log line
+    if value doest start with `FUNCTION` then value will be substituted as is in actual log line(no manipulation to specified value)
+ex. 
+    log line: `this is log line with format_1`
+    override: 
+    ```json
+        {
+            "override_key": "format_1",
+            "override_values": [
+                "value1",
+                "value2",
+            ]
+        }
+    ```
+    output line which goes to destination is 
+    ```
+    this is log line with value1
+    ```
+    or
+    ```
+        this is log line with value2
+    ```

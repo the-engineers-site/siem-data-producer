@@ -3,20 +3,21 @@ package network_utils
 import (
 	"bufio"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/Formatter"
-	"gitlab.com/yjagdale/siem-data-producer/models/producer"
-	"gitlab.com/yjagdale/siem-data-producer/models/profile"
-	"math/rand"
 	"net"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"gitlab.com/yjagdale/siem-data-producer/Formatter"
+	"gitlab.com/yjagdale/siem-data-producer/models/producer"
+	"gitlab.com/yjagdale/siem-data-producer/models/profile"
 )
 
 func StartProducer(p *producer.Producer) producer.Response {
+	log.Infoln("Starting producer")
 	var response producer.Response
 	stats, err := os.Stat(p.Profile.FilePath)
 
@@ -26,7 +27,7 @@ func StartProducer(p *producer.Producer) producer.Response {
 	}
 
 	if stats.Size() > 1594682 {
-		log.Info("File is greater than 1594682")
+		log.Infoln("File is greater than 1594682")
 		log.Infoln("Producing aync")
 		p.Continues = true
 	}
@@ -50,8 +51,11 @@ func StartProducer(p *producer.Producer) producer.Response {
 }
 
 func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
+	log.Infoln("Async producer started")
 	file := readFile(profile.FilePath)
+	log.Infoln("File read completed")
 	connection, err := getConnection(profile.Destination, profile.Protocol)
+	log.Infoln("Connection eastablished")
 	if err != nil {
 		return err
 	}
@@ -64,12 +68,8 @@ func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
 
 	scanner := bufio.NewScanner(file)
 
-	min := 1
-	max := 2
-	maxGoroutines := rand.Intn(max-min) + min
-	eps = eps - maxGoroutines
-	guard := make(chan struct{}, maxGoroutines)
-
+	guard := make(chan struct{}, eps)
+	log.Infoln("Posting logs to destination")
 	for scanner.Scan() {
 		guard <- struct{}{}
 		go func(conn net.Conn, data string) {
