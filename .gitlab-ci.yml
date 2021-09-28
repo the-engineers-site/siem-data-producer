@@ -29,6 +29,10 @@ compile:
   stage: build
   services:
     - docker:dind
+
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+
   script:
     - docker build --pull -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" -t "$DOCKER_REPO_NAME:latest" .
     - docker push "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA"
