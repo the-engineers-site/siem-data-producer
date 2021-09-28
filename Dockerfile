@@ -13,8 +13,8 @@ USER root
 
 COPY --from=builder /home/siem-data-producer siem-data-producer
 
-ADD --from=builder /home/static static
-ADD --from=builder /home/docs docs
+COPY --from=builder /home/static static
+COPY --from=builder /home/docs docs
 
 RUN chown -R app:app /home/app
 
