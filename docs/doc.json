@@ -477,36 +477,25 @@
       "type": "array",
       "example": "[1,2,3]"
     },
+
     "Configuration": {
       "type": "object",
       "required": [
-        "destination",
-        "protocol",
-        "file_path",
-        "name"
+        "override_key",
+        "override_values"
       ],
       "properties": {
-        "properties": {
-          "destination": {
-            "type": "string",
-            "format": "10.0.0.81:514"
-          },
-          "protocol": {
-            "type": "string",
-            "example": "udp/tcp"
-          },
-          "file_path": {
-            "type": "string",
-            "example": "/storage/data/test.log"
-          },
-          "name": {
-            "type": "string",
-            "example": "proxy_profile"
-          }
+        "override_key": {
+          "type": "string",
+          "format": "date_format_01"
+        },
+        "override_values": {
+          "type": "array",
+          "example": "[\"FUNCTION::DATE::Jan 2 15:04:05\"]"
         }
       },
       "xml": {
-        "name": "Pet"
+        "name": "Profiles"
       }
     },
     "ApiResponse": {
