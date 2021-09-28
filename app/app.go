@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/services"
-	"gitlab.com/yjagdale/siem-data-producer/utils/utils"
+	"siem-data-producer/services"
+	"siem-data-producer/utils/utils"
 	"time"
 )
 

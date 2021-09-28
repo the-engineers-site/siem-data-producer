@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gitlab.com/yjagdale/siem-data-producer/app"
-	"gitlab.com/yjagdale/siem-data-producer/utils/logger_utils"
+	"siem-data-producer/app"
+	"siem-data-producer/utils/logger_utils"
 )
 
 func init() {

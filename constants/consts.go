@@ -2,7 +2,7 @@ package constants
 
 const (
 	ResponseBadRequest = "Invalid body"
-	DefaultDbPath      = "/tmp/producer"
+	DefaultDbPath      = "/tmp"
 	DefaultDbName      = "database.db"
 )
 

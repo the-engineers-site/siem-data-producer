@@ -2,9 +2,9 @@ package services
 
 import (
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/models/producer"
-	"gitlab.com/yjagdale/siem-data-producer/models/profile"
 	"net/http"
+	"siem-data-producer/models/producer"
+	"siem-data-producer/models/profile"
 )
 
 var (

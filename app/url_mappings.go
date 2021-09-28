@@ -5,13 +5,13 @@ import (
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"github.com/thinkerou/favicon"
-	"gitlab.com/yjagdale/siem-data-producer/controllers/configuration_controller"
-	"gitlab.com/yjagdale/siem-data-producer/controllers/health_controller"
-	"gitlab.com/yjagdale/siem-data-producer/controllers/log_file_upload"
-	"gitlab.com/yjagdale/siem-data-producer/controllers/producer_controller"
-	"gitlab.com/yjagdale/siem-data-producer/controllers/profile_controller"
-	_ "gitlab.com/yjagdale/siem-data-producer/docs"
 	"os"
+	"siem-data-producer/controllers/configuration_controller"
+	"siem-data-producer/controllers/health_controller"
+	"siem-data-producer/controllers/log_file_upload"
+	"siem-data-producer/controllers/producer_controller"
+	"siem-data-producer/controllers/profile_controller"
+	_ "siem-data-producer/docs"
 )
 
 var api *gin.RouterGroup

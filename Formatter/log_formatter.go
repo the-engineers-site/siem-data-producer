@@ -2,8 +2,8 @@ package Formatter
 
 import (
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
 	"math/rand"
+	"siem-data-producer/constants"
 	"strings"
 	"time"
 )

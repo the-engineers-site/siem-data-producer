@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/models/producer"
-	"gitlab.com/yjagdale/siem-data-producer/models/profile"
-	"gitlab.com/yjagdale/siem-data-producer/network_utils"
 	"net/http"
+	"siem-data-producer/models/producer"
+	"siem-data-producer/models/profile"
+	"siem-data-producer/network_utils"
 )
 
 var (

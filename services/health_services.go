@@ -1,7 +1,7 @@
 package services
 
 import (
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
+	"siem-data-producer/utils/http_utils"
 )
 
 var (

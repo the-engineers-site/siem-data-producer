@@ -19,6 +19,5 @@ func (s *logger) InitLogger() {
 	if os.Getenv("LOG_LEVEL") == "debug" {
 		log.SetLevel(log.DebugLevel)
 	}
-	log.SetFormatter(&log.JSONFormatter{})
 	log.Infoln("Starting application")
 }

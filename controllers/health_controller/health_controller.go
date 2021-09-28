@@ -2,7 +2,7 @@ package health_controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.com/yjagdale/siem-data-producer/services"
+	"siem-data-producer/services"
 )
 
 func Ping(c *gin.Context) {

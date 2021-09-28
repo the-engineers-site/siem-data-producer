@@ -11,9 +11,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/Formatter"
-	"gitlab.com/yjagdale/siem-data-producer/models/producer"
-	"gitlab.com/yjagdale/siem-data-producer/models/profile"
+	"siem-data-producer/Formatter"
+	"siem-data-producer/models/producer"
+	"siem-data-producer/models/profile"
 )
 
 func StartProducer(p *producer.Producer) producer.Response {
@@ -63,11 +63,11 @@ func StartProducer(p *producer.Producer) producer.Response {
 }
 
 func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
-	log.Infoln("Async producer started")
+	log.Debugln("Async producer started")
 	file := readFile(profile.FilePath)
-	log.Infoln("File read completed")
+	log.Debugln("File read completed")
 	connection, err := getConnection(profile.Destination, profile.Protocol)
-	log.Infoln("Connection eastablished")
+	log.Debugln("Connection eastablished")
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
 	scanner := bufio.NewScanner(file)
 
 	guard := make(chan struct{}, eps)
-	log.Infoln("Posting logs to destination")
+	log.Debugln("Posting logs to destination")
 	for scanner.Scan() {
 		guard <- struct{}{}
 		go func(conn net.Conn, data string) {
@@ -90,6 +90,8 @@ func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
 			<-guard
 		}(connection, scanner.Text())
 	}
+
+	log.Infoln("Batch completed for ", profile.FilePath)
 
 	return nil
 
@@ -125,7 +127,7 @@ func getConnection(destinationServer string, protocol string) (net.Conn, error) 
 		conn, err = net.DialTimeout("tcp", destinationServer, 40*time.Second)
 		break
 	case "UDP":
-		log.Infoln("Building UDP connection")
+		log.Debugln("Building UDP connection")
 		conn, err = net.Dial("udp", destinationServer)
 		break
 	}

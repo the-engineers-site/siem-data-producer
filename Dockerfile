@@ -1,3 +1,8 @@
+FROM golang:1.16 as builder
+WORKDIR /home
+ADD . .
+RUN go build -o siem-data-producer main.go
+
 FROM centos:8
 RUN useradd -ms /bin/bash app
 
@@ -6,14 +11,11 @@ WORKDIR /home/app
 
 USER root
 
-ARG JAR_FILE=siem-data-producer
-COPY ${JAR_FILE} siem-data-producer
+COPY --from=builder /home/siem-data-producer siem-data-producer
 
-ADD static static
-ADD docs docs
+ADD --from=builder /home/static static
+ADD --from=builder /home/docs docs
 
 RUN chown -R app:app /home/app
-
-USER app
 
 ENTRYPOINT ["/home/app/siem-data-producer"]

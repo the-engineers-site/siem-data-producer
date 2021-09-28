@@ -4,9 +4,9 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/database"
 	"gorm.io/gorm"
 	"net/http"
+	"siem-data-producer/database"
 	"strings"
 )
 

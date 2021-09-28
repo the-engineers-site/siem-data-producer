@@ -2,12 +2,12 @@ package app
 
 import (
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/database"
-	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
-	"gitlab.com/yjagdale/siem-data-producer/models/file_upload"
-	"gitlab.com/yjagdale/siem-data-producer/models/health_models"
-	"gitlab.com/yjagdale/siem-data-producer/models/producer"
-	"gitlab.com/yjagdale/siem-data-producer/models/profile"
+	"siem-data-producer/database"
+	"siem-data-producer/models/configuration"
+	"siem-data-producer/models/file_upload"
+	"siem-data-producer/models/health_models"
+	"siem-data-producer/models/producer"
+	"siem-data-producer/models/profile"
 	"time"
 )
 

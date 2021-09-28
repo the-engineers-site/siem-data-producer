@@ -3,9 +3,9 @@ package services
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
-	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
 	"net/http"
+	"siem-data-producer/constants"
+	"siem-data-producer/models/configuration"
 )
 
 var (

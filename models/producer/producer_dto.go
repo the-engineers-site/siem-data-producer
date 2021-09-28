@@ -2,7 +2,7 @@ package producer
 
 import (
 	"errors"
-	"gitlab.com/yjagdale/siem-data-producer/models/profile"
+	"siem-data-producer/models/profile"
 )
 
 type Producer struct {

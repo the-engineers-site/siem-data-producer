@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is a data producer server.  You can find out more about     Swagger at [siem-data-producer](https://gitlab.com/yjagdale/siem-data-producer).      For this api server, you can use the api key `special-key` to test the authorization     filters.",
+    "description": "This is a data producer server.  You can find out more about     Swagger at [siem-data-producer](https://siem-data-producer).      For this api server, you can use the api key `special-key` to test the authorization     filters.",
     "version": "1.0.0",
     "title": "Swagger SIEM data producer",
     "termsOfService": "http://www.yashjagdale.in/terms/",
@@ -467,7 +467,7 @@
         "parameters": [
           {
             "name": "profileId",
-            "in": "profile",
+            "in": "path",
             "description": "ID of profiles to return",
             "required": true,
             "type": "integer",
@@ -507,7 +507,7 @@
         "parameters": [
           {
             "name": "profileId",
-            "in": "profile",
+            "in": "path",
             "description": "ID of profiles to Delete",
             "required": true,
             "type": "integer",

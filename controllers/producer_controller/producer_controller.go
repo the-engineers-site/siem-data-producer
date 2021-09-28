@@ -3,11 +3,11 @@ package producer_controller
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
-	"gitlab.com/yjagdale/siem-data-producer/models/producer"
-	"gitlab.com/yjagdale/siem-data-producer/services"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"net/http"
+	"siem-data-producer/constants"
+	"siem-data-producer/models/producer"
+	"siem-data-producer/services"
+	"siem-data-producer/utils/http_utils"
 )
 
 func StartProduce(c *gin.Context) {
