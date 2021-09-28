@@ -244,6 +244,46 @@
             "api_key": []
           }
         ]
+      },
+      "delete": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Delete configuration by ID",
+        "description": "Deletes a single configuration",
+        "operationId": "deleteConfigurationId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "configId",
+            "in": "path",
+            "description": "ID of configuration to Delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Configuration"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "id not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
       }
     },
     "/profile": {
@@ -453,6 +493,46 @@
             "api_key": []
           }
         ]
+      },
+      "delete": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Delete Profiles by ID",
+        "description": "Delete a single Profiles",
+        "operationId": "getProfilesId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "profile",
+            "description": "ID of profiles to Delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Profiles"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Profiles not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
       }
     }
   },
@@ -476,6 +556,13 @@
     "DeleteConfig": {
       "type": "array",
       "example": "[1,2,3]"
+    },
+    "DeleteProfile": {
+      "type": "array",
+      "example": [
+        "Profile_01",
+        "Profile_02"
+      ]
     },
     "Profiles": {
       "type": "object",
