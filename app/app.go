@@ -48,6 +48,10 @@ func initReload() {
 	}()
 }
 
+func initProducers() {
+	services.ProducerService.Init()
+}
+
 func StartApplication() {
 	log.Infoln("Start Application version x")
 	mapUrls()
@@ -55,6 +59,7 @@ func StartApplication() {
 	log.Info("about to start the application...")
 
 	log.Infoln("Starting application on :", utils.GetPort())
+	initProducers()
 	err := router.Run(":" + utils.GetPort())
 	if err != nil {
 		log.Fatalln("Error while starting service.", err)

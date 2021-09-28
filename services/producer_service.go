@@ -19,9 +19,23 @@ type producerServiceInterface interface {
 	StopProducer(*producer.Producer) producer.Response
 	GetProducer(*producer.Producer) producer.Response
 	DeleteProducer([]string) producer.Response
+	Init()
 }
 
 type producerService struct {
+}
+
+func (p producerService) Init() {
+	var producerEntity = producer.Producer{}
+	allProducer, err := producerEntity.GetAll()
+	if err != nil {
+		log.Errorln("Error while initiating executions")
+	}
+
+	for index, entity := range allProducer {
+		log.Infoln("Init for ", index, " ID:", entity.ExecutionId)
+		p.StartProducer(&entity)
+	}
 }
 
 func (p producerService) DeleteProducer(ids []string) producer.Response {
@@ -51,8 +65,16 @@ func (p producerService) DeleteProducer(ids []string) producer.Response {
 }
 
 func (p producerService) GetProducer(producerObject *producer.Producer) producer.Response {
+	response := producer.Response{}
 	if producerObject.ExecutionId == "" {
-		return producerObject.GetAll()
+		entities, err := producerObject.GetAll()
+		if err != nil {
+			response.SetMessage(http.StatusInternalServerError, nil, err)
+			return response
+		} else {
+			response.SetMessage(http.StatusOK, entities, nil)
+			return response
+		}
 	}
 	return producerObject.Get()
 }

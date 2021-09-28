@@ -59,7 +59,7 @@ func (producerObject *Producer) Get() Response {
 	return resp
 }
 
-func (producerObject *Producer) GetAll() Response {
+func (producerObject *Producer) GetAll() ([]Producer, error) {
 	var resp = Response{}
 	db, err := database.GetDBConnection()
 	var producers []Producer
@@ -67,14 +67,12 @@ func (producerObject *Producer) GetAll() Response {
 		err := db.Model(&Producer{}).Find(&producers).Error
 		if err != nil {
 			log.Infoln("Error while fetching config")
-			resp.SetMessage(http.StatusInternalServerError, nil, err)
-			return resp
+			return nil, err
 		}
-		resp.SetMessage(http.StatusOK, producers, nil)
-		return resp
+		return producers, nil
 	}
 	resp.SetMessage(http.StatusInternalServerError, "DB Connection Error", err)
-	return resp
+	return nil, err
 }
 
 func (producerObject *Producer) Update() Response {
