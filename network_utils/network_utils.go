@@ -19,6 +19,7 @@ import (
 func StartProducer(p *producer.Producer) producer.Response {
 	log.Infoln("Starting producer")
 	var response producer.Response
+	var async bool
 	stats, err := os.Stat(p.Profile.FilePath)
 
 	if err != nil {
@@ -29,17 +30,28 @@ func StartProducer(p *producer.Producer) producer.Response {
 	if stats.Size() > 1594682 {
 		log.Infoln("File is greater than 1594682")
 		log.Infoln("Producing aync")
-		p.Continues = true
+		async = true
 	}
 
 	if p.Continues {
+
 		go func() {
+			for p.Get().Status == 200 {
+				err := readAndPushLogsAsync(p.Profile, p.Eps)
+				if err != nil {
+					log.Errorln("Error while producing logs.", err)
+				}
+			}
+		}()
+
+	} else {
+		if async {
+			log.Infoln("Producing file async")
 			err := readAndPushLogsAsync(p.Profile, p.Eps)
 			if err != nil {
 				log.Errorln("Error while producing logs.", err)
 			}
-		}()
-	} else {
+		}
 		err := readAndPushLogsAsync(p.Profile, p.Eps)
 		if err != nil {
 			response.SetMessage(http.StatusInternalServerError, nil, err)
