@@ -477,7 +477,36 @@
       "type": "array",
       "example": "[1,2,3]"
     },
-
+    "Profiles": {
+      "type": "object",
+      "required": [
+        "destination",
+        "protocol",
+        "file_path",
+        "name"
+      ],
+      "properties": {
+        "destination": {
+          "type": "string",
+          "format": "10.0.0.81:514"
+        },
+        "protocol": {
+          "type": "string",
+          "example": "udp/tcp"
+        },
+        "file_path": {
+          "type": "string",
+          "example": "/Securonix/test.log"
+        },
+        "name": {
+          "type": "string",
+          "example": "proxy_squid"
+        }
+      },
+      "xml": {
+        "name": "Profiles"
+      }
+    },
     "Configuration": {
       "type": "object",
       "required": [
