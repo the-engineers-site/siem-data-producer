@@ -1,0 +1,21 @@
+[Unit]
+Description=SIEM Data Service
+After=docker.service
+Requires=docker.service docker.socket dbus.service dbus.socket
+StopWhenUnneeded=yes
+
+[Service]
+TimeoutStartSec=infinity
+Restart=always
+RestartSec=5
+User=root
+TimeoutStartSec=0
+Type=simple
+ExecStartPre=-/bin/sh -c "/usr/bin/docker kill siem-data-producer || true"
+ExecStartPre=-/bin/sh -c "/usr/bin/docker rm siem-data-producer || true"
+ExecStartPre=-/bin/sh -c "/usr/bin/docker pull registry.gitlab.com/yjagdale/siem-data-producer:latest || true"
+ExecStart= -/bin/sh -c "/usr/bin/docker run -i --rm --net=host --hostname siem-data-producer --privileged -e IP_ADDR='http://10.0.0.81:8082' -v /Securonix/datagenerator:/Securonix/datagenerator -e DB_PATH=/Securonix/datagenerator  --name siem-data-producer registry.gitlab.com/yjagdale/siem-data-producer:latest"
+ExecStop=/usr/bin/docker stop siem-data-producer
+
+[Install]
+WantedBy=siem-data-service.target

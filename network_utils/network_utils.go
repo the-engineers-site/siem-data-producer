@@ -11,7 +11,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"siem-data-producer/Formatter"
+	"siem-data-producer/formatter"
 	"siem-data-producer/models/producer"
 	"siem-data-producer/models/profile"
 )
@@ -42,6 +42,8 @@ func StartProducer(p *producer.Producer) producer.Response {
 					log.Errorln("Error while producing logs.", err)
 				}
 			}
+			log.Infoln("Seems like ", p, " is deleted. Stopping producer")
+			return
 		}()
 
 	} else {
@@ -67,7 +69,7 @@ func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
 	file := readFile(profile.FilePath)
 	log.Debugln("File read completed")
 	connection, err := getConnection(profile.Destination, profile.Protocol)
-	log.Debugln("Connection eastablished")
+	log.Debugln("Connection established")
 	if err != nil {
 		return err
 	}
@@ -97,8 +99,8 @@ func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
 
 }
 
-func produceLog(connection net.Conn, log string) bool {
-	logLine := Formatter.FormatLog(log)
+func produceLog(connection net.Conn, l string) bool {
+	logLine := formatter.FormatLog(l)
 	err := pushLog(connection, logLine)
 	if err != nil {
 		return false
