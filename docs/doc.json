@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "This is a data producer server.  You can find out more about     Swagger at [siem-data-producer](https://siem-data-producer).      For this api server, you can use the api key `special-key` to test the authorization     filters.",
+    "description": "This is a data producer server.  You can find out more about     Swagger at [siem-data-producer](https://gitlab.com/yjagdale/siem-data-producer).",
     "version": "1.0.0",
-    "title": "Swagger SIEM data producer",
+    "title": "Swagger `SIEM` data producer",
     "termsOfService": "http://www.yashjagdale.in/terms/",
     "contact": {
       "email": "yjagdale@icloud.com"
@@ -307,7 +307,7 @@
                 {
                   "destination": "10.0.0.81:514",
                   "protocol": "udp",
-                  "file_path": "/Securonix/dataproducer/test.log",
+                  "file_path": "/Storage/dataproducer/test.log",
                   "name": "proxy"
                 }
               ]
@@ -534,6 +534,179 @@
           }
         ]
       }
+    },
+    "/producer": {
+      "get": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "Returns Producers",
+        "description": "Returns a map of Producers",
+        "operationId": "getProducers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "example": [
+                {
+                  "execution_id": "UUID",
+                  "profile_name": "profile_name",
+                  "eps": 101,
+                  "continues": true
+                },
+                {
+                  "execution_id": "UUID2",
+                  "profile_name": "profile_2",
+                  "eps": 10,
+                  "continues": true
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "Add a Producer which will produce data to endpoint",
+        "description": "This api will `add and start` producer",
+        "operationId": "addProducer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Producers object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producers"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Producers saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "update existing Producer settings",
+        "description": "This api will updated existing producer. User can change `eps`, continues etc",
+        "operationId": "updateProducer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Producers object that needs to be updated to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producer"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Producers saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "delete/`stop` Producers",
+        "description": "This api will delete Producers in bulk from the database and also stops logs production for those",
+        "operationId": "deleteMultiProducers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Producer ID's that needs to be deleted from store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteProducer"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Profile saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      }
     }
   },
   "securityDefinitions": {
@@ -564,6 +737,38 @@
         "Profile_02"
       ]
     },
+    "DeleteProducer": {
+      "type": "array",
+      "example": [
+        "Producer_UUID_1",
+        "Producer_UUID_2"
+      ]
+    },
+    "Producers": {
+      "type": "object",
+      "required": [
+        "continues",
+        "eps",
+        "profile_name"
+      ],
+      "properties": {
+        "continues": {
+          "type": "boolean",
+          "example": true
+        },
+        "eps": {
+          "type": "int",
+          "example": 101
+        },
+        "profile_name": {
+          "type": "string",
+          "example": "existing_profile_name"
+        }
+      },
+      "xml": {
+        "name": "Producers"
+      }
+    },
     "Profiles": {
       "type": "object",
       "required": [
@@ -575,7 +780,7 @@
       "properties": {
         "destination": {
           "type": "string",
-          "format": "10.0.0.81:514"
+          "example": "10.0.0.81:514"
         },
         "protocol": {
           "type": "string",
@@ -583,7 +788,7 @@
         },
         "file_path": {
           "type": "string",
-          "example": "/Securonix/test.log"
+          "example": "/Storage/test.log"
         },
         "name": {
           "type": "string",
