@@ -535,7 +535,7 @@
         ]
       }
     },
-    "/producer": {
+    "/produce": {
       "get": {
         "tags": [
           "Producers"
