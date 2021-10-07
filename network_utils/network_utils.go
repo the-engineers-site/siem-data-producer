@@ -2,6 +2,7 @@ package network_utils
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -71,6 +72,10 @@ func StartProducer(p *producer.Producer) producer.Response {
 
 func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
 	log.Debugln("Async producer started")
+	if profile == nil || profile.FilePath != "" {
+		log.Errorln("Error while reading file, Empty profile. ", &profile)
+		return errors.New("profile is empty")
+	}
 	file := readFile(profile.FilePath)
 	log.Debugln("File read completed")
 	connection, err := getConnection(profile.Destination, profile.Protocol)
