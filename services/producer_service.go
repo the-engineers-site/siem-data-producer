@@ -88,6 +88,15 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 		resp.SetMessage(http.StatusBadRequest, gin.H{"message": "Profile does not exists"}, nil)
 		return resp
 	}
+
+	producerObject.Profile = &profileObj
+
+	if producerObject.ExecutionId != "" {
+		log.Infoln("Restarted producer ", producerObject)
+		resp := network_utils.StartProducer(producerObject)
+		return resp
+	}
+
 	producerObject.Profile = &profileObj
 	u, err := uuid.NewV4()
 	if err == nil {

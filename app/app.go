@@ -29,7 +29,7 @@ func init() {
 			param.ErrorMessage,
 		)
 	}))
-
+	log.SetReportCaller(true)
 	initDBMigration()
 	initReload()
 	router.Use(gin.Recovery())

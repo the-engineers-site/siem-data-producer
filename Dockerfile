@@ -16,7 +16,8 @@ COPY --from=builder /home/siem-data-producer siem-data-producer
 
 COPY --from=builder /home/static static
 COPY --from=builder /home/docs docs
-COPY --from=builder /home/producer /usr/local/bin/producer
+COPY --from=builder /home/producer /usr/local/bin/producectl
+RUN chmod 777 /usr/local/bin/producectl
 RUN chown -R app:app /home/app
 
 ENTRYPOINT ["/home/app/siem-data-producer"]

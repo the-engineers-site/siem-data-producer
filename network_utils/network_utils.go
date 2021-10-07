@@ -20,6 +20,11 @@ func StartProducer(p *producer.Producer) producer.Response {
 	log.Infoln("Starting producer")
 	var response producer.Response
 	var async bool
+	if p.Profile == nil {
+		log.Errorln("Profile seems empty")
+		response.SetMessage(http.StatusInternalServerError, nil, "Profile seems empty")
+		return response
+	}
 	stats, err := os.Stat(p.Profile.FilePath)
 
 	if err != nil {
