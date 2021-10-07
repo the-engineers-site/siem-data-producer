@@ -1,7 +1,7 @@
 FROM golang:1.16 as builder
 WORKDIR /home
 ADD . .
-RUN go build -o siem-data-producectl main.go
+RUN go build -o siem-data-producer main.go
 RUN go build -o producectl producectl/main.go
 
 FROM centos:8
