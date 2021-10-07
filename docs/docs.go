@@ -26,7 +26,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Schemes:     []string{},
-	Title:       "SIEM data producer data model",
+	Title:       "SIEM data producectl data model",
 	Description: "This utility can be used to produce data for multiple channels",
 }
 

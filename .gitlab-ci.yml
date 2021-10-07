@@ -7,8 +7,8 @@ image: docker:latest
 
 variables:
   # Please edit to your GitLab project
-  REPO_NAME: gitlab.com/yjagdale/siem-data-producer
-  DOCKER_REPO_NAME: registry.gitlab.com/yjagdale/siem-data-producer
+  REPO_NAME: gitlab.com/yjagdale/siem-data-producectl
+  DOCKER_REPO_NAME: registry.gitlab.com/yjagdale/siem-data-producectl
 
 
 # The problem is that to be able to use go get, one needs to put
