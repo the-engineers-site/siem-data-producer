@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
@@ -8,6 +9,7 @@ import (
 	"siem-data-producer/models/producer"
 	"siem-data-producer/models/profile"
 	"siem-data-producer/network_utils"
+	"siem-data-producer/producectl/log_utils"
 )
 
 var (
@@ -81,6 +83,7 @@ func (p producerService) GetProducer(producerObject *producer.Producer) producer
 
 func (p producerService) StartProducer(producerObject *producer.Producer) producer.Response {
 	profileObj := profile.Profile{Name: producerObject.ProfileName}
+	producerCtlCommand := "producerctl "
 	profileObj.Get()
 	if profileObj.FilePath == "" {
 		log.Info("No profile found. ")
@@ -90,6 +93,16 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 	}
 
 	producerObject.Profile = &profileObj
+
+	if producerObject.Continues {
+		producerCtlCommand = fmt.Sprintf(producerCtlCommand + "continues")
+	} else {
+		producerCtlCommand = producerCtlCommand + "once "
+	}
+
+	producerCtlCommand = fmt.Sprintf(producerCtlCommand+"--server=%s --protocol=%s --file_path=%s --eps=%d", profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
+
+	log_utils.Log.Infoln("Starting process ", producerCtlCommand)
 
 	if producerObject.ExecutionId != "" {
 		log.Infoln("Restarted producer ", producerObject)

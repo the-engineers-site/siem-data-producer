@@ -31,12 +31,14 @@ func main() {
 	filePathAttack := attack.Flag("file_path", "path to read records from").String()
 
 	// params for once
-	logLines := once.Flag("logLines", "log lines to be processed").Required().Strings()
+	logLines := once.Flag("logLines", "log lines to be processed").Strings()
+	filePathOnce := once.Flag("file_path", "path to read records from").String()
+	epsOnce := once.Flag("eps", "path to read records from").Int()
 
 	switch kingpin.Parse() {
 	case "continues":
 		log_utils.Log.Println("Continues producer invoked.")
-		continuesPublisher.StartContinuesProducer(*serverIP, *protocol, *filePath, *eps)
+		continuesPublisher.StartContinuesProducer(*serverIP, *protocol, *filePath, *eps, true)
 		break
 	case "attack":
 		if len(*logLinesAttack) == 0 && *filePathAttack == "" {
@@ -50,7 +52,14 @@ func main() {
 		attach_simulator.StartAttack(*serverIP, *protocol, strings.Split(*logLinesAttack, ","), *eps, *attackFrequencyInSec)
 		break
 	case "once":
+		if len(*logLines) == 0 && *filePathOnce == "" {
+			log_utils.Log.Fatalln("--logLines or --file_path is mandatory. Please use --help for more details")
+		}
 		log_utils.Log.Infoln("once producer", *serverIP, *protocol, logLines)
+		if *epsOnce == 0 {
+			*epsOnce = 1
+		}
+		continuesPublisher.StartContinuesProducer(*serverIP, *protocol, *filePath, *epsOnce, true)
 		break
 	}
 

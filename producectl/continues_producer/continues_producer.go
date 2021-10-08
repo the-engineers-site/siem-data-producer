@@ -8,7 +8,7 @@ import (
 	"siem-data-producer/producectl/tcp_utils"
 )
 
-func StartContinuesProducer(serverIp string, protocol string, filePath string, eps int) {
+func StartContinuesProducer(serverIp string, protocol string, filePath string, eps int, continues bool) {
 	file_utils.DisplayStats(filePath)
 	log_utils.Log.Infof("Destination: %s", serverIp)
 	log_utils.Log.Infof("Protocol: %s", protocol)
@@ -27,5 +27,8 @@ func StartContinuesProducer(serverIp string, protocol string, filePath string, e
 	for {
 		produce.PushLogs(&connection, filePath, eps)
 		log_utils.Log.Infoln("Batch published for ", filePath)
+		if !continues {
+			break
+		}
 	}
 }
