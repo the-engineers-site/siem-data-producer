@@ -18,7 +18,7 @@ import (
 )
 
 func StartProducer(p *producer.Producer) producer.Response {
-	log.Infoln("Starting producectl")
+	log.Infoln("Starting producer")
 	var response producer.Response
 	var async bool
 	if p.Profile == nil {
@@ -71,8 +71,8 @@ func StartProducer(p *producer.Producer) producer.Response {
 }
 
 func readAndPushLogsAsync(profile *profile.Profile, eps int) error {
-	log.Debugln("Async producectl started")
-	if profile == nil || profile.FilePath != "" {
+	log.Debugln("Async producer started")
+	if profile == nil || profile.FilePath == "" {
 		log.Errorln("Error while reading file, Empty profile. ", &profile)
 		return errors.New("profile is empty")
 	}

@@ -10,7 +10,7 @@ type Producer struct {
 	ExecutionId string           `json:"execution_id" gorm:"primarykey;not null"`
 	ProfileName string           `json:"profile_name" binding:"required"`
 	Eps         int              `json:"eps" binding:"required"`
-	Command     string           `json:"command" binding:"required"`
+	Command     string           `json:"command"`
 	ProcessId   int              `json:"process_id"`
 	Continues   bool             `json:"continues" binding:"required"`
 }

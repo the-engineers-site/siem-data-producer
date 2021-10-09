@@ -103,7 +103,7 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 	producerCtlCommand = fmt.Sprintf(producerCtlCommand+"--server=%s --protocol=%s --file_path=%s --eps=%d", profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
 
 	log_utils.Log.Infoln("Starting process ", producerCtlCommand)
-
+	producerObject.Command = producerCtlCommand
 	if producerObject.ExecutionId != "" {
 		log.Infoln("Restarted producer ", producerObject)
 		resp := network_utils.StartProducer(producerObject)
