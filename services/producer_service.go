@@ -100,7 +100,7 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 		producerCtlCommand = producerCtlCommand + "once "
 	}
 
-	producerCtlCommand = fmt.Sprintf(producerCtlCommand+"--server=%s --protocol=%s --file_path=%s --eps=%d", profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
+	producerCtlCommand = fmt.Sprintf(producerCtlCommand+" --server=%s --protocol=%s --file_path='%s' --eps=%d", profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
 
 	log_utils.Log.Infoln("Starting process ", producerCtlCommand)
 	producerObject.Command = producerCtlCommand
