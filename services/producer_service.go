@@ -6,7 +6,7 @@ import (
 	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"os"
+	"os/exec"
 	"siem-data-producer/models/producer"
 	"siem-data-producer/models/profile"
 	"siem-data-producer/producectl/log_utils"
@@ -87,9 +87,8 @@ func (p producerService) GetProducer(producerObject *producer.Producer) producer
 
 func (p producerService) StartProducer(producerObject *producer.Producer) producer.Response {
 	profileObj := profile.Profile{Name: producerObject.ProfileName}
-	producerCtlCommand := "producerctl"
-	printCommand := "producerctl "
-	var producerArgs []string
+	cliPath := "/home/producerctl"
+	var argsForProducer string
 	profileObj.Get()
 	if profileObj.FilePath == "" {
 		log.Info("No profile found. ")
@@ -101,31 +100,21 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 	producerObject.Profile = &profileObj
 
 	if producerObject.Continues {
-		producerArgs = append(producerArgs, "continues")
-		printCommand = fmt.Sprintf(printCommand + "continues")
+		argsForProducer = "continues"
 	} else {
-		producerArgs = append(producerArgs, "once")
-		producerCtlCommand = producerCtlCommand + "once "
+		argsForProducer = "once"
 	}
 
-	producerArgs = append(producerArgs, "--server="+profileObj.Destination)
-	producerArgs = append(producerArgs, "--protocol="+profileObj.Protocol)
-	producerArgs = append(producerArgs, fmt.Sprintf("--file_path='%s'", profileObj.FilePath))
-	producerArgs = append(producerArgs, fmt.Sprintf("--eps=%d", producerObject.Eps))
-	printCommand = fmt.Sprintf("%s --server=%s --protocol=%s --file_path='%s' --eps=%d", printCommand, profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
+	argsForProducer = fmt.Sprintf("%s --server=%s --protocol=%s --file_path='%s' --eps=%d", argsForProducer, profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
 
-	log_utils.Log.Infoln("Starting process ", printCommand)
-	producerObject.Command = printCommand
-	procAttr := new(os.ProcAttr)
-	procAttr.Files = []*os.File{os.Stdin, os.Stdout, os.Stderr}
-	process, err := os.StartProcess(producerCtlCommand, producerArgs, procAttr)
-	fmt.Printf("%v\n", process)
-	if err != nil {
-		log_utils.Log.Errorf("ERROR Unable to run %s: %s\n", producerCtlCommand, err.Error())
-	} else {
-		log_utils.Log.Infof("%s running as pid %d\n", producerCtlCommand, process.Pid)
-		producerObject.ProcessId = process.Pid
+	log_utils.Log.Infof("Starting process %s %s", cliPath, argsForProducer)
+
+	process := exec.Command(cliPath, argsForProducer)
+	if err := process.Start(); err != nil {
+		log_utils.Log.Errorln(err)
 	}
+	log_utils.Log.Infof("%s running as pid %v\n", argsForProducer, process)
+	producerObject.ProcessId = process.Process.Pid
 
 	if producerObject.ExecutionId != "" {
 		log.Infoln("Restarted producer ", producerObject)
