@@ -13,6 +13,7 @@ import (
 
 const (
 	OVERRIDE = "/v1/configuration"
+	CLIPATH  = "/home/producerctl"
 )
 
 var Overrides map[string][]string

@@ -6,9 +6,11 @@ import (
 	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 	"os/exec"
 	"siem-data-producer/models/producer"
 	"siem-data-producer/models/profile"
+	"siem-data-producer/producectl/constants"
 	"siem-data-producer/producectl/log_utils"
 )
 
@@ -87,8 +89,6 @@ func (p producerService) GetProducer(producerObject *producer.Producer) producer
 
 func (p producerService) StartProducer(producerObject *producer.Producer) producer.Response {
 	profileObj := profile.Profile{Name: producerObject.ProfileName}
-	cliPath := "/home/producerctl"
-	var argsForProducer string
 	profileObj.Get()
 	if profileObj.FilePath == "" {
 		log.Info("No profile found. ")
@@ -99,22 +99,14 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 
 	producerObject.Profile = &profileObj
 
-	if producerObject.Continues {
-		argsForProducer = "continues"
-	} else {
-		argsForProducer = "once"
+	process, err := startProcess(producerObject)
+
+	if err != nil {
+		resp := producer.Response{}
+		resp.SetMessage(http.StatusInternalServerError, nil, err)
 	}
 
-	argsForProducer = fmt.Sprintf("%s --server=%s --protocol=%s --file_path='%s' --eps=%d", argsForProducer, profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
-
-	log_utils.Log.Infof("Starting process %s %s", cliPath, argsForProducer)
-
-	process := exec.Command(cliPath, argsForProducer)
-	if err := process.Start(); err != nil {
-		log_utils.Log.Errorln(err)
-	}
-	log_utils.Log.Infof("%s running as pid %v\n", argsForProducer, process)
-	producerObject.ProcessId = process.Process.Pid
+	producerObject.ProcessId = process
 
 	if producerObject.ExecutionId != "" {
 		log.Infoln("Restarted producer ", producerObject)
@@ -140,4 +132,36 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 func (p producerService) StopProducer(producerObject *producer.Producer) producer.Response {
 	log.Infoln(producerObject)
 	panic("implement me")
+}
+
+func startProcess(entity *producer.Producer) (int, error) {
+	log_utils.Log.Infof("%v", entity)
+	var executionMode string
+	if entity.Continues {
+		executionMode = "continues"
+	} else {
+		executionMode = "once"
+	}
+
+	server := fmt.Sprintf("--server=%s", entity.Profile.Destination)
+	protocol := fmt.Sprintf("--protocol=%s", entity.Profile.Protocol)
+	filePath := fmt.Sprintf("--file_path=%s", entity.Profile.FilePath)
+	eps := fmt.Sprintf("--eps=%d", entity.Eps)
+
+	cmd := exec.Command(constants.CLIPATH, executionMode, server, protocol, filePath, eps)
+
+	log_utils.Log.Infof("Producer Command: %v", cmd)
+
+	cmd.Stdout = os.Stdout
+	err := cmd.Start()
+
+	if err != nil {
+		log_utils.Log.Errorln(err)
+		return 0, err
+	}
+
+	outputStr, _ := cmd.Output()
+	log_utils.Log.Infoln(outputStr)
+	log_utils.Log.Infof("Started Producer for %v", entity)
+	return cmd.Process.Pid, nil
 }
