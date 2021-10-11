@@ -88,7 +88,7 @@ func (p producerService) GetProducer(producerObject *producer.Producer) producer
 func (p producerService) StartProducer(producerObject *producer.Producer) producer.Response {
 	profileObj := profile.Profile{Name: producerObject.ProfileName}
 	producerCtlCommand := "producerctl"
-	producerCtlCmd := "producerctl "
+	printCommand := "producerctl "
 	var producerArgs []string
 	profileObj.Get()
 	if profileObj.FilePath == "" {
@@ -102,7 +102,7 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 
 	if producerObject.Continues {
 		producerArgs = append(producerArgs, "continues")
-		producerCtlCmd = fmt.Sprintf(producerCtlCmd + "continues")
+		printCommand = fmt.Sprintf(printCommand + "continues")
 	} else {
 		producerArgs = append(producerArgs, "once")
 		producerCtlCommand = producerCtlCommand + "once "
@@ -110,18 +110,20 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 
 	producerArgs = append(producerArgs, "--server="+profileObj.Destination)
 	producerArgs = append(producerArgs, "--protocol="+profileObj.Protocol)
-	producerArgs = append(producerArgs, "--file_path='"+profileObj.FilePath+"'")
+	producerArgs = append(producerArgs, fmt.Sprintf("--file_path='%s'", profileObj.FilePath))
 	producerArgs = append(producerArgs, fmt.Sprintf("--eps=%d", producerObject.Eps))
-	producerCtlCmd = fmt.Sprintf(producerCtlCmd+" --server=%s --protocol=%s --file_path='%s' --eps=%d", profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
+	printCommand = fmt.Sprintf("%s --server=%s --protocol=%s --file_path='%s' --eps=%d", printCommand, profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
 
-	log_utils.Log.Infoln("Starting process ", producerCtlCmd)
-	producerObject.Command = producerCtlCmd
+	log_utils.Log.Infoln("Starting process ", printCommand)
+	producerObject.Command = printCommand
 	procAttr := new(os.ProcAttr)
 	procAttr.Files = []*os.File{os.Stdin, os.Stdout, os.Stderr}
-	if process, err := os.StartProcess(producerCtlCommand, producerArgs, procAttr); err != nil {
-		log_utils.Log.Errorln("ERROR Unable to run %s: %s\n", producerCtlCommand, err.Error())
+	process, err := os.StartProcess(producerCtlCommand, producerArgs, procAttr)
+	fmt.Printf("%v\n", process)
+	if err != nil {
+		log_utils.Log.Errorf("ERROR Unable to run %s: %s\n", producerCtlCommand, err.Error())
 	} else {
-		log_utils.Log.Info("%s running as pid %d\n", producerCtlCommand, process.Pid)
+		log_utils.Log.Infof("%s running as pid %d\n", producerCtlCommand, process.Pid)
 		producerObject.ProcessId = process.Pid
 	}
 
