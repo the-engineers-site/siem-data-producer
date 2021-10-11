@@ -5,7 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 	"siem-data-producer/database"
+	"siem-data-producer/producectl/log_utils"
 	"strings"
 )
 
@@ -76,17 +78,41 @@ func (producerObject *Producer) GetAll() ([]Producer, error) {
 }
 
 func (producerObject *Producer) Update() Response {
+	db, err := database.GetDBConnection()
 	var resp Response
-	resp.SetMessage(http.StatusOK, "Updated successfully", nil)
-	return resp
+	if database.ValidateConnection() {
+		err := db.Save(producerObject).RowsAffected
+		if err == 0 {
+			log.Errorln("Error while updating producer ", err)
+			resp.SetMessage(http.StatusNotFound, nil, errors.New("configuration not found"))
+			return resp
+		} else {
+			resp.SetMessage(http.StatusOK, "Configuration deleted successfully", nil)
+			return resp
+		}
+	} else {
+		resp.SetMessage(http.StatusInternalServerError, "Internal server Error", err)
+		return resp
+	}
 }
 
 func (producerObject *Producer) Delete() Response {
 	db, err := database.GetDBConnection()
 	var resp Response
 	if database.ValidateConnection() {
-		err := db.Delete(producerObject).RowsAffected
-		if err == 0 {
+		proc, err := os.FindProcess(producerObject.ProcessId)
+		if err != nil {
+			log_utils.Log.Errorln("Process kill error", err)
+		} else {
+			err := proc.Signal(os.Kill)
+			if err != nil {
+				resp.SetMessage(http.StatusInternalServerError, nil, err)
+				return resp
+			}
+		}
+
+		rowsAffected := db.Delete(producerObject).RowsAffected
+		if rowsAffected == 0 {
 			log.Errorln("Configuration not found. Affected rows ", err)
 			resp.SetMessage(http.StatusNotFound, nil, errors.New("configuration not found"))
 			return resp

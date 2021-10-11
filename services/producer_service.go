@@ -6,9 +6,9 @@ import (
 	"github.com/nu7hatch/gouuid"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 	"siem-data-producer/models/producer"
 	"siem-data-producer/models/profile"
-	"siem-data-producer/network_utils"
 	"siem-data-producer/producectl/log_utils"
 )
 
@@ -52,14 +52,18 @@ func (p producerService) DeleteProducer(ids []string) producer.Response {
 		var producerEntity = producer.Producer{
 			ExecutionId: id,
 		}
-		response := producerEntity.Delete()
-		if response.Status == http.StatusOK {
-			statusCount.Success = append(statusCount.Success, id)
-		} else if response.Status == http.StatusNotFound {
-			statusCount.NotFount = append(statusCount.NotFount, id)
-		} else if response.Status == http.StatusInternalServerError {
-			statusCount.Failed = append(statusCount.Failed, id)
+		resp := producerEntity.Get()
+		if resp.Status == 200 {
+			response := producerEntity.Delete()
+			if response.Status == http.StatusOK {
+				statusCount.Success = append(statusCount.Success, id)
+			} else if response.Status == http.StatusNotFound {
+				statusCount.NotFount = append(statusCount.NotFount, id)
+			} else if response.Status == http.StatusInternalServerError {
+				statusCount.Failed = append(statusCount.Failed, id)
+			}
 		}
+
 	}
 	resp := producer.Response{}
 	resp.SetMessage(http.StatusOK, statusCount, nil)
@@ -83,7 +87,9 @@ func (p producerService) GetProducer(producerObject *producer.Producer) producer
 
 func (p producerService) StartProducer(producerObject *producer.Producer) producer.Response {
 	profileObj := profile.Profile{Name: producerObject.ProfileName}
-	producerCtlCommand := "producerctl "
+	producerCtlCommand := "producerctl_mac"
+	producerCtlMac := "producerctl_mac"
+	var producerArgs []string
 	profileObj.Get()
 	if profileObj.FilePath == "" {
 		log.Info("No profile found. ")
@@ -95,18 +101,33 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 	producerObject.Profile = &profileObj
 
 	if producerObject.Continues {
+		producerArgs = append(producerArgs, "continues")
 		producerCtlCommand = fmt.Sprintf(producerCtlCommand + "continues")
 	} else {
+		producerArgs = append(producerArgs, "once")
 		producerCtlCommand = producerCtlCommand + "once "
 	}
 
+	producerArgs = append(producerArgs, "--server="+profileObj.Destination)
+	producerArgs = append(producerArgs, "--protocol="+profileObj.Protocol)
+	producerArgs = append(producerArgs, "--file_path='"+profileObj.FilePath+"'")
+	producerArgs = append(producerArgs, fmt.Sprintf("--eps=%d", producerObject.Eps))
 	producerCtlCommand = fmt.Sprintf(producerCtlCommand+" --server=%s --protocol=%s --file_path='%s' --eps=%d", profileObj.Destination, profileObj.Protocol, profileObj.FilePath, producerObject.Eps)
 
 	log_utils.Log.Infoln("Starting process ", producerCtlCommand)
 	producerObject.Command = producerCtlCommand
+	procAttr := new(os.ProcAttr)
+	procAttr.Files = []*os.File{os.Stdin, os.Stdout, os.Stderr}
+	if process, err := os.StartProcess(producerCtlMac, producerArgs, procAttr); err != nil {
+		log_utils.Log.Errorln("ERROR Unable to run %s: %s\n", producerCtlCommand, err.Error())
+	} else {
+		log_utils.Log.Info("%s running as pid %d\n", producerCtlCommand, process.Pid)
+		producerObject.ProcessId = process.Pid
+	}
+
 	if producerObject.ExecutionId != "" {
 		log.Infoln("Restarted producer ", producerObject)
-		resp := network_utils.StartProducer(producerObject)
+		resp := producerObject.Update()
 		return resp
 	}
 
@@ -120,7 +141,7 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 	if resp.Status != 201 {
 		return resp
 	} else {
-		resp := network_utils.StartProducer(producerObject)
+		resp := producerObject.Save()
 		return resp
 	}
 }
