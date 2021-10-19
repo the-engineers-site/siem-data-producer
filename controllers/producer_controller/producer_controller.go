@@ -19,7 +19,7 @@ func StartProduce(c *gin.Context) {
 	if err != nil {
 		resp.SetMessage(http.StatusBadRequest, "Invalid body", err.Error())
 	} else {
-		log.Infoln("Storing configuration")
+		log.Infoln("starting producer")
 		resp = services.ProducerService.StartProducer(&producerObject)
 	}
 	c.JSON(resp.GetStatus(), resp.GetResponse())

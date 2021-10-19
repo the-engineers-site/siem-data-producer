@@ -16,13 +16,13 @@ func (producerObject *Producer) Save() Response {
 	db, err := database.GetDBConnection()
 
 	if err != nil {
-		log.Errorln("Error while saving config.", err)
+		log.Errorln("Error while starting producer.", err)
 		resp.SetMessage(http.StatusInternalServerError, nil, err)
 		return resp
 	}
 	dbResponse := db.Model(&Producer{}).Create(&producerObject).Error
 	if dbResponse != nil && strings.Contains(dbResponse.Error(), "UNIQUE constraint failed") {
-		resp.SetMessage(http.StatusBadRequest, nil, gin.H{"reason": "Override key already exists", "code": 1002})
+		resp.SetMessage(http.StatusBadRequest, nil, gin.H{"reason": "Producer init failed", "code": 1002})
 		return resp
 	} else if dbResponse != nil {
 		resp.SetMessage(http.StatusInternalServerError, nil, dbResponse.Error())
@@ -84,10 +84,10 @@ func (producerObject *Producer) Update() Response {
 		err := db.Save(producerObject).RowsAffected
 		if err == 0 {
 			log.Errorln("Error while updating producer ", err)
-			resp.SetMessage(http.StatusNotFound, nil, errors.New("configuration not found"))
+			resp.SetMessage(http.StatusNotFound, nil, errors.New("producer not found"))
 			return resp
 		} else {
-			resp.SetMessage(http.StatusOK, "Configuration deleted successfully", nil)
+			resp.SetMessage(http.StatusOK, "Producer updated successfully", nil)
 			return resp
 		}
 	} else {
@@ -113,11 +113,11 @@ func (producerObject *Producer) Delete() Response {
 
 		rowsAffected := db.Delete(producerObject).RowsAffected
 		if rowsAffected == 0 {
-			log.Errorln("Configuration not found. Affected rows ", err)
-			resp.SetMessage(http.StatusNotFound, nil, errors.New("configuration not found"))
+			log.Errorln("Producer not found. Affected rows ", err)
+			resp.SetMessage(http.StatusNotFound, nil, errors.New("producer not found"))
 			return resp
 		} else {
-			resp.SetMessage(http.StatusOK, "Configuration deleted successfully", nil)
+			resp.SetMessage(http.StatusOK, "producer deleted successfully", nil)
 			return resp
 		}
 	} else {

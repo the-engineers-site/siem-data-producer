@@ -110,8 +110,7 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 
 	if producerObject.ExecutionId != "" {
 		log.Infoln("Restarted producer ", producerObject)
-		resp := producerObject.Update()
-		return resp
+		return producerObject.Update()
 	}
 
 	producerObject.Profile = &profileObj
@@ -120,13 +119,7 @@ func (p producerService) StartProducer(producerObject *producer.Producer) produc
 		producerObject.ExecutionId = u.String()
 	}
 
-	resp := producerObject.Save()
-	if resp.Status != 201 {
-		return resp
-	} else {
-		resp := producerObject.Save()
-		return resp
-	}
+	return producerObject.Save()
 }
 
 func (p producerService) StopProducer(producerObject *producer.Producer) producer.Response {
@@ -151,7 +144,7 @@ func startProcess(entity *producer.Producer) (int, error) {
 	cmd := exec.Command(constants.CLIPATH, executionMode, server, protocol, filePath, eps)
 
 	log_utils.Log.Infof("Producer Command: %v", cmd)
-
+	entity.Command = cmd.String()
 	cmd.Stdout = os.Stdout
 	err := cmd.Start()
 
@@ -163,5 +156,6 @@ func startProcess(entity *producer.Producer) (int, error) {
 	outputStr, _ := cmd.Output()
 	log_utils.Log.Infoln(outputStr)
 	log_utils.Log.Infof("Started Producer for %v", entity)
+
 	return cmd.Process.Pid, nil
 }
