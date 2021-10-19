@@ -91,4 +91,7 @@ func producerMapping() {
 	producerController.DELETE("/", producer_controller.DeleteProfile)
 	producerController.DELETE("/:id", producer_controller.DeleteProfile)
 
+	logController := api.Group("/test")
+	logController.POST("/logs", producer_controller.TestLogs)
+
 }

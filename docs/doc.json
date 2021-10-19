@@ -26,6 +26,10 @@
     {
       "name": "Producers",
       "description": "Operations about sending data to destination"
+    },
+    {
+      "name": "Test",
+      "description": "Test logs before publishing"
     }
   ],
   "schemes": [
@@ -33,6 +37,56 @@
     "https"
   ],
   "paths": {
+    "/test/logs": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Test override by passing logs directly",
+        "description": "This api will take logs as input and return formatted/templated logs out",
+        "operationId": "testLogs",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Array of logs lines to to perform override",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "example": [
+                "sample_line_1",
+                "sample_line_2"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Configuration saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:config",
+              "read:config"
+            ]
+          }
+        ]
+      }
+    },
     "/configuration": {
       "get": {
         "tags": [
@@ -639,7 +693,7 @@
             "description": "Producers object that needs to be updated to the store",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/Producer"
+              "$ref": "#/definitions/Producers"
             }
           }
         ],
@@ -757,7 +811,7 @@
           "example": true
         },
         "eps": {
-          "type": "int",
+          "type": "number",
           "example": 101
         },
         "profile_name": {
@@ -768,6 +822,9 @@
       "xml": {
         "name": "Producers"
       }
+    },
+    "TestLog": {
+      "type": "array"
     },
     "Profiles": {
       "type": "object",

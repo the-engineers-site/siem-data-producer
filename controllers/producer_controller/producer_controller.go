@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"siem-data-producer/constants"
+	"siem-data-producer/formatter"
 	"siem-data-producer/models/producer"
 	"siem-data-producer/services"
 	"siem-data-producer/utils/http_utils"
@@ -24,6 +25,28 @@ func StartProduce(c *gin.Context) {
 	}
 	c.JSON(resp.GetStatus(), resp.GetResponse())
 	return
+
+}
+
+func TestLogs(c *gin.Context) {
+	var logsInput []string
+	var response []string
+	err := c.ShouldBindJSON(&logsInput)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, http_utils.NewOkResponse(constants.ResponseBadRequest+err.Error()))
+		return
+	}
+
+	if len(logsInput) > 1000 {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Max 999 logs can be tested at a time"})
+		return
+	}
+
+	for _, line := range logsInput {
+		response = append(response, formatter.FormatLog(line))
+	}
+
+	c.JSON(http.StatusOK, response)
 
 }
 
