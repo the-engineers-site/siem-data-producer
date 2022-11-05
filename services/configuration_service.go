@@ -3,9 +3,9 @@ package services
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
-	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
 	"net/http"
+	"siem-data-producer/constants"
+	"siem-data-producer/models/configuration"
 )
 
 var (
@@ -31,7 +31,7 @@ func (c *configurationService) Reload() configuration.Response {
 		return resp
 	}
 	if constants.Executors == nil {
-		constants.Executors = make(map[string]interface{})
+		constants.Executors = make(map[string][]string)
 	}
 	for k, v := range resp.GetResponse().([]configuration.Configuration) {
 		log.Debugln("Loading", k, v.OverrideKey)

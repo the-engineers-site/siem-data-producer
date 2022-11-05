@@ -3,7 +3,7 @@
 # This specific template is located at:
 # https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Go.gitlab-ci.yml
 
-image: golang:latest
+image: docker:latest
 
 variables:
   # Please edit to your GitLab project
@@ -24,23 +24,15 @@ before_script:
 
 stages:
   - build
-  - deploy
 
 compile:
   stage: build
-  script:
-    - go build -race -ldflags "-extldflags '-static'" -o $CI_PROJECT_DIR/siem-data-producer
-  artifacts:
-    paths:
-      - siem-data-producer
-
-deploy:
-  image: docker:latest
   services:
     - docker:dind
-  stage: deploy
+
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+
   script:
     - docker build --pull -t "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA" -t "$DOCKER_REPO_NAME:latest" .
     - docker push "$DOCKER_REPO_NAME:$CI_COMMIT_SHORT_SHA"

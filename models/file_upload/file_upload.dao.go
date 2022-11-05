@@ -2,12 +2,12 @@ package file_upload
 
 import (
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/database"
-	"gitlab.com/yjagdale/siem-data-producer/utils/fileUtils"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"io"
 	"mime/multipart"
 	"os"
+	"siem-data-producer/database"
+	"siem-data-producer/utils/fileUtils"
+	"siem-data-producer/utils/http_utils"
 )
 
 func (fileUploadObject *FileUpload) Upload() *http_utils.ResponseEntity {

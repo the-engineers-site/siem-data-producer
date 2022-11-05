@@ -1,16 +1,15 @@
-package configuration
+package profile
 
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 	"net/http"
 	"siem-data-producer/database"
 	"strings"
 )
 
-func (config *Configuration) Save() Response {
+func (profile *Profile) Save() Response {
 	var resp Response
 	db, err := database.GetDBConnection()
 
@@ -19,42 +18,50 @@ func (config *Configuration) Save() Response {
 		resp.SetMessage(http.StatusInternalServerError, nil, err)
 		return resp
 	}
-	dbResponse := db.Model(&Configuration{}).Create(&config).Error
+	dbResponse := db.Model(&Profile{}).Create(&profile).Error
 	if dbResponse != nil && strings.Contains(dbResponse.Error(), "UNIQUE constraint failed") {
-		resp.SetMessage(http.StatusBadRequest, nil, gin.H{"reason": "Override key already exists", "code": 1002})
+		resp.SetMessage(http.StatusBadRequest, nil, gin.H{"reason": "profile key already exists", "code": 1002})
 		return resp
 	} else if dbResponse != nil {
 		resp.SetMessage(http.StatusInternalServerError, nil, dbResponse.Error())
 		return resp
 	}
-	resp.SetMessage(http.StatusCreated, config, nil)
+	resp.SetMessage(http.StatusCreated, profile, nil)
 	return resp
 }
 
-func (config *Configuration) Get() Response {
+func (profile *Profile) Get() Response {
 	db, err := database.GetDBConnection()
 	var resp Response
-	dbError := db.Model(&Configuration{}).First(&config).Error
+	dbError := db.Model(&Profile{}).First(&profile).Error
 	if dbError != nil {
-		if errors.Is(dbError, gorm.ErrRecordNotFound) {
-			log.Infoln("No records found")
-			resp.SetMessage(http.StatusNotFound, nil, dbError)
-			return resp
-		}
 		log.Infoln("Error while fetching config")
 		resp.SetMessage(http.StatusInternalServerError, nil, err)
 		return resp
 	}
-	resp.SetMessage(http.StatusOK, config, nil)
+	resp.SetMessage(http.StatusOK, profile, nil)
 	return resp
 }
 
-func (config *Configuration) GetAll() Response {
+func (profile *Profile) GetProfileByName() Response {
+	db, err := database.GetDBConnection()
+	var resp Response
+	dbError := db.Model(&Profile{}).Where("name=?", profile.Name).First(&profile).Error
+	if dbError != nil {
+		log.Infoln("Error while fetching config")
+		resp.SetMessage(http.StatusInternalServerError, nil, err)
+		return resp
+	}
+	resp.SetMessage(http.StatusOK, profile, nil)
+	return resp
+}
+
+func (profile *Profile) GetAll() Response {
 	var resp = Response{}
 	db, err := database.GetDBConnection()
-	var configurations []Configuration
+	var configurations []Profile
 	if database.ValidateConnection() {
-		err := db.Model(&Configuration{}).Find(&configurations).Error
+		err := db.Model(&Profile{}).Find(&configurations).Error
 		if err != nil {
 			log.Infoln("Error while fetching config")
 			resp.SetMessage(http.StatusInternalServerError, nil, err)
@@ -67,17 +74,17 @@ func (config *Configuration) GetAll() Response {
 	return resp
 }
 
-func (config *Configuration) Update() Response {
+func (profile *Profile) Update() Response {
 	var resp Response
 	resp.SetMessage(http.StatusOK, "Updated successfully", nil)
 	return resp
 }
 
-func (config *Configuration) Delete() Response {
+func (profile *Profile) Delete() Response {
 	db, err := database.GetDBConnection()
 	var resp Response
 	if database.ValidateConnection() {
-		err := db.Delete(config).RowsAffected
+		err := db.Delete(profile).RowsAffected
 		if err == 0 {
 			log.Errorln("Configuration not found. Affected rows ", err)
 			resp.SetMessage(http.StatusNotFound, nil, errors.New("configuration not found"))

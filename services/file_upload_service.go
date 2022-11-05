@@ -2,10 +2,10 @@ package services
 
 import (
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/models/file_upload"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"mime/multipart"
 	"path/filepath"
+	"siem-data-producer/models/file_upload"
+	"siem-data-producer/utils/http_utils"
 )
 
 var FileUploadService fileUploadInterface = &fileUploadService{}

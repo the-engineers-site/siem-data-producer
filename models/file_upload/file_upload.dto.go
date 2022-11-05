@@ -1,11 +1,11 @@
 package file_upload
 
 import (
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"gorm.io/gorm"
 	"mime/multipart"
 	"path/filepath"
 	"regexp"
+	"siem-data-producer/utils/http_utils"
 )
 
 type FileUpload struct {

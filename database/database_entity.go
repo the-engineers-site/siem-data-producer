@@ -1,12 +1,13 @@
 package database
 
 import (
+	"os"
+	"siem-data-producer/constants"
+	"siem-data-producer/models/health_models"
+
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
-	"gitlab.com/yjagdale/siem-data-producer/models/health_models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"os"
 )
 
 var databaseConnection *gorm.DB
@@ -18,22 +19,26 @@ func GetDBConnection() (*gorm.DB, error) {
 func connectDB() (*gorm.DB, error) {
 	var err error
 	var dbPath string
-	log.Infoln("Connecting to database")
-	dbPath = os.Getenv("DB_PATH")
-	if dbPath == "" {
-		dbPath = constants.DefaultDbPath
-		err = os.MkdirAll(constants.DefaultDbPath, 0777)
-		if err != nil {
-			log.Errorln("Error while creating database directory", err)
+	if databaseConnection == nil {
+		log.Debugln("Connecting to database")
+		dbPath = os.Getenv("DB_PATH")
+		if dbPath == "" {
+			dbPath = constants.DefaultDbPath + "/" + constants.DefaultDbName
+			err = os.MkdirAll(constants.DefaultDbPath, 0777)
+			if err != nil {
+				log.Errorln("Error while creating database directory", err)
+			}
+		} else {
+			log.Infoln("DB path provided in env, Using", dbPath)
+			dbPath = dbPath + "/" + constants.DefaultDbName
 		}
-	} else {
-		log.Infoln("DB path provided in env, Using", dbPath)
-		dbPath = dbPath + "/" + constants.DefaultDbName
-	}
 
-	databaseConnection, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
-	log.Debugln("Connected ", err == nil)
-	return databaseConnection, err
+		databaseConnection, err = gorm.Open(sqlite.Open(dbPath), &gorm.Config{})
+		log.Debugln("Connected ", err == nil)
+		return databaseConnection, err
+	} else {
+		return databaseConnection, nil
+	}
 }
 
 func ValidateConnection() bool {

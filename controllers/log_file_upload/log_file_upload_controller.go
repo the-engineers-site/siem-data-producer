@@ -3,8 +3,8 @@ package log_file_upload
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/services"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
+	"siem-data-producer/services"
+	"siem-data-producer/utils/http_utils"
 )
 
 func UploadFile(c *gin.Context) {

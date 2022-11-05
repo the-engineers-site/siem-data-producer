@@ -1,0 +1,899 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is a data producer server.  You can find out more about     Swagger at [siem-data-producer](https://gitlab.com/yjagdale/siem-data-producer).",
+    "version": "1.0.0",
+    "title": "Swagger `SIEM` data producer",
+    "termsOfService": "http://www.yashjagdale.in/terms/",
+    "contact": {
+      "email": "yjagdale@icloud.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "Configuration",
+      "description": "Everything about your configuration and overrides"
+    },
+    {
+      "name": "Profiles",
+      "description": "Access/Modify/Create to Profiles"
+    },
+    {
+      "name": "Producers",
+      "description": "Operations about sending data to destination"
+    },
+    {
+      "name": "Test",
+      "description": "Test logs before publishing"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/test/logs": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "summary": "Test override by passing logs directly",
+        "description": "This api will take logs as input and return formatted/templated logs out",
+        "operationId": "testLogs",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Array of logs lines to to perform override",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "example": [
+                "sample_line_1",
+                "sample_line_2"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Configuration saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:config",
+              "read:config"
+            ]
+          }
+        ]
+      }
+    },
+    "/configuration": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Returns configuration inventories",
+        "description": "Returns a map of Configuration",
+        "operationId": "getConfig",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "example": [
+                {
+                  "ID": 4,
+                  "CreatedAt": "2021-09-21T22:54:35.649726+05:30",
+                  "UpdatedAt": "2021-09-21T22:54:35.649726+05:30",
+                  "DeletedAt": null,
+                  "override_key": "string_22",
+                  "override_values": [
+                    "FUNCTION::DATE::Jan 2 15:04:05"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Add a new override configuration",
+        "description": "This api will add configuration to the database",
+        "operationId": "addConfig",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Configuration object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Configuration"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Configuration saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:config",
+              "read:config"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "update existing override configuration",
+        "description": "This api will updated existing configuration to the database",
+        "operationId": "updateConfig",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Configuration object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Configuration"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Configuration saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:config",
+              "read:config"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "delete override configurations",
+        "description": "This api will delete configuration in bulk from the database",
+        "operationId": "deleteMultiConfig",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Configuration object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteConfig"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Configuration saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:config",
+              "read:config"
+            ]
+          }
+        ]
+      }
+    },
+    "/configuration/{configId}": {
+      "get": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Find configuration by ID",
+        "description": "Returns a single configuration",
+        "operationId": "getConfigurationId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "configId",
+            "in": "path",
+            "description": "ID of configuration to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Configuration"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Configuration"
+        ],
+        "summary": "Delete configuration by ID",
+        "description": "Deletes a single configuration",
+        "operationId": "deleteConfigurationId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "configId",
+            "in": "path",
+            "description": "ID of configuration to Delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Configuration"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "id not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/profile": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Returns Profiles",
+        "description": "Returns a map of Profiles",
+        "operationId": "getProfiles",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "example": [
+                {
+                  "destination": "10.0.0.81:514",
+                  "protocol": "udp",
+                  "file_path": "/Storage/dataproducer/test.log",
+                  "name": "proxy"
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Add a profile to store, Which will be used for producing",
+        "description": "This api will add profile to the database",
+        "operationId": "addProfile",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Profile object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Profiles"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Profiles saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "update existing profile configuration",
+        "description": "This api will updated existing profile to the database",
+        "operationId": "updateProfile",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Profiles object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Profiles"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Profiles saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "delete profiles",
+        "description": "This api will delete Profiles in bulk from the database",
+        "operationId": "deleteMultiProfiles",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Configuration object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteProfile"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Profile saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      }
+    },
+    "/profile/{profileId}": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Find Profiles by ID",
+        "description": "Returns a single Profiles",
+        "operationId": "getProfilesId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "description": "ID of profiles to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Profiles"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Profiles not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Delete Profiles by ID",
+        "description": "Delete a single Profiles",
+        "operationId": "getProfilesId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "path",
+            "description": "ID of profiles to Delete",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Profiles"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Profiles not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/produce": {
+      "get": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "Returns Producers",
+        "description": "Returns a map of Producers",
+        "operationId": "getProducers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "example": [
+                {
+                  "execution_id": "UUID",
+                  "profile_name": "profile_name",
+                  "eps": 101,
+                  "continues": true
+                },
+                {
+                  "execution_id": "UUID2",
+                  "profile_name": "profile_2",
+                  "eps": 10,
+                  "continues": true
+                }
+              ]
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "Add a Producer which will produce data to endpoint",
+        "description": "This api will `add and start` producer",
+        "operationId": "addProducer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Producers object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producers"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Producers saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "update existing Producer settings",
+        "description": "This api will updated existing producer. User can change `eps`, continues etc",
+        "operationId": "updateProducer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Producers object that needs to be updated to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Producers"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Producers saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Producers"
+        ],
+        "summary": "delete/`stop` Producers",
+        "description": "This api will delete Producers in bulk from the database and also stops logs production for those",
+        "operationId": "deleteMultiProducers",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Producer ID's that needs to be deleted from store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/DeleteProducer"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "Record not found"
+          },
+          "200": {
+            "description": "Profile saved successfully"
+          }
+        },
+        "security": [
+          {
+            "config_auth": [
+              "write:profile",
+              "read:profile"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "siem_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:pets": "modify pets in your account",
+        "read:pets": "read your pets"
+      }
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "DeleteConfig": {
+      "type": "array",
+      "example": "[1,2,3]"
+    },
+    "DeleteProfile": {
+      "type": "array",
+      "example": [
+        "Profile_01",
+        "Profile_02"
+      ]
+    },
+    "DeleteProducer": {
+      "type": "array",
+      "example": [
+        "Producer_UUID_1",
+        "Producer_UUID_2"
+      ]
+    },
+    "Producers": {
+      "type": "object",
+      "required": [
+        "continues",
+        "eps",
+        "profile_name"
+      ],
+      "properties": {
+        "continues": {
+          "type": "boolean",
+          "example": true
+        },
+        "eps": {
+          "type": "number",
+          "example": 101
+        },
+        "profile_name": {
+          "type": "string",
+          "example": "existing_profile_name"
+        }
+      },
+      "xml": {
+        "name": "Producers"
+      }
+    },
+    "TestLog": {
+      "type": "array"
+    },
+    "Profiles": {
+      "type": "object",
+      "required": [
+        "destination",
+        "protocol",
+        "file_path",
+        "name"
+      ],
+      "properties": {
+        "destination": {
+          "type": "string",
+          "example": "10.0.0.81:514"
+        },
+        "protocol": {
+          "type": "string",
+          "example": "udp/tcp"
+        },
+        "file_path": {
+          "type": "string",
+          "example": "/Storage/test.log"
+        },
+        "name": {
+          "type": "string",
+          "example": "proxy_squid"
+        }
+      },
+      "xml": {
+        "name": "Profiles"
+      }
+    },
+    "Configuration": {
+      "type": "object",
+      "required": [
+        "override_key",
+        "override_values"
+      ],
+      "properties": {
+        "override_key": {
+          "type": "string",
+          "format": "date_format_01"
+        },
+        "override_values": {
+          "type": "array",
+          "example": "[\"FUNCTION::DATE::Jan 2 15:04:05\"]"
+        }
+      },
+      "xml": {
+        "name": "Profiles"
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

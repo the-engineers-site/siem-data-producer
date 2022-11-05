@@ -3,11 +3,11 @@ package configuration_controller
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.com/yjagdale/siem-data-producer/constants"
-	"gitlab.com/yjagdale/siem-data-producer/models/configuration"
-	"gitlab.com/yjagdale/siem-data-producer/services"
-	"gitlab.com/yjagdale/siem-data-producer/utils/http_utils"
 	"net/http"
+	"siem-data-producer/constants"
+	"siem-data-producer/models/configuration"
+	"siem-data-producer/services"
+	"siem-data-producer/utils/http_utils"
 	"strconv"
 )
 
