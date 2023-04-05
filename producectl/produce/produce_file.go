@@ -17,6 +17,8 @@ func PushLogs(connection *net.Conn, filePath string, eps int) {
 		log_utils.Log.Fatalln(err)
 	}
 
+	defer file.Close()
+
 	guard := make(chan struct{}, eps)
 
 	scanner := bufio.NewScanner(file)
