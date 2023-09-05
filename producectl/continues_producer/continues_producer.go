@@ -1,7 +1,6 @@
 package continues_publisher
 
 import (
-	"net"
 	"siem-data-producer/producectl/file_utils"
 	"siem-data-producer/producectl/log_utils"
 	"siem-data-producer/producectl/produce"
@@ -18,17 +17,10 @@ func StartContinuesProducer(serverIp string, protocol string, filePath string, e
 		log_utils.Log.Fatalln(err)
 	}
 	log_utils.Log.Infoln("Connection opened")
-	defer func(connection net.Conn) {
-		err := connection.Close()
-		if err != nil {
-			log_utils.Log.Errorln(err)
-		}
-	}(connection)
-	for {
+	defer connection.Close()
+	if continues {
 		produce.PushLogs(&connection, filePath, eps)
-		log_utils.Log.Infoln("Batch published for ", filePath)
-		if !continues {
-			break
-		}
+	} else {
+		produce.PublicLogsOnce(&connection, filePath, eps)
 	}
 }

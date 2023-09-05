@@ -11,6 +11,26 @@ import (
 
 func PushLogs(connection *net.Conn, filePath string, eps int) {
 
+	ticker := time.NewTicker(time.Second / time.Duration(eps))
+	defer ticker.Stop()
+
+	for {
+		f, err := os.Open(filePath)
+		if err != nil {
+			panic(err.Error())
+		}
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			select {
+			case <-ticker.C:
+				tcp_utils.Publish(connection, scanner.Text())
+			}
+		}
+		f.Close()
+	}
+}
+
+func PublicLogsOnce(connection *net.Conn, filePath string, eps int) {
 	file, err := os.Open(filePath)
 
 	if err != nil {
@@ -30,5 +50,4 @@ func PushLogs(connection *net.Conn, filePath string, eps int) {
 			<-guard
 		}(connection, scanner.Text())
 	}
-
 }
